@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAL AI GUI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to FAL AI GUI</h1>
+
+    <div id="modeSelector" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ccc;">
+        <strong>Select Mode:</strong>&nbsp;&nbsp;
+        <label><input type="radio" name="mode" value="txt2img" checked> Text-to-Image</label>
+        &nbsp;&nbsp;
+        <label><input type="radio" name="mode" value="img2img"> Image-to-Image</label>
+        &nbsp;&nbsp;
+        <label><input type="radio" name="mode" value="inpaint"> Inpainting</label>
+        &nbsp;&nbsp;
+        <label><input type="radio" name="mode" value="upscale"> Upscaling</label>
+        &nbsp;&nbsp;
+        <label><input type="radio" name="mode" value="bgremove"> Background Removal</label>
+    </div>
+
+    <div>
+        <label for="apiKey">FAL API Key:</label>
+        <input type="text" id="apiKey" placeholder="Enter your FAL API Key">
+        <button id="saveApiKey">Save API Key</button>
+        <button id="clearApiKey">Clear API Key</button>
+        <div id="apiKeyStatus" style="margin-top: 5px;"></div>
+    </div>
+
+    <hr>
+
+    <div id="txt2imgControls">
+        <h2>Text-to-Image Controls</h2>
+        <div>
+            <label for="modelSelection">Select Model:</label>
+            <select id="modelSelection" name="model">
+                <option value="fal-ai/fast-sdxl">Fast SDXL (Default)</option>
+                <option value="fal-ai/sdxl">SDXL (Potentially Slower, Higher Quality)</option>
+                <option value="fal-ai/fast-turbo-diffusion">Fast Turbo Diffusion</option>
+                <!-- Add more models as placeholders if desired -->
+            </select>
+        </div>
+
+        <div>
+            <label for="promptInput">Prompt:</label>
+            <textarea id="promptInput" placeholder="Enter your prompt here (e.g., a cat riding a unicorn)" rows="3" cols="50"></textarea>
+        </div>
+
+        <div>
+            <label for="negativePromptInput">Negative Prompt:</label>
+            <textarea id="negativePromptInput" placeholder="Enter negative prompt (e.g., blurry, ugly, low quality, deformed)" rows="2" cols="50"></textarea>
+        </div>
+
+        <div>
+            <label for="seedInput">Seed:</label>
+            <input type="number" id="seedInput" placeholder="Leave blank for random">
+            <button id="randomSeedButton" type="button" style="margin-left: 5px;">Random</button>
+        </div>
+
+        <div>
+            <label for="guidanceScaleInput">Guidance Scale (CFG):</label>
+            <input type="number" id="guidanceScaleInput" step="0.1" placeholder="e.g., 7.5 (default for SDXL)">
+        </div>
+
+        <div>
+            <label for="numStepsInput">Number of Inference Steps:</label>
+            <input type="number" id="numStepsInput" placeholder="e.g., 30 (default varies by model)">
+        </div>
+
+        <div>
+            <button id="generateButton">Generate Text-to-Image</button>
+        </div>
+    </div>
+
+    <div id="img2imgControls" style="display:none;">
+        <h2>Image-to-Image Controls</h2>
+        <div>
+            <label for="img2imgModelSelection">Select Model:</label>
+            <select id="img2imgModelSelection" name="img2imgModel">
+                <option value="fal-ai/sdxl-i2i-placeholder">SDXL Image-to-Image (Placeholder)</option>
+                <option value="fal-ai/ip-adapter-faceid-plus-lora">IP Adapter FaceID Plus SDXL (Use with uploaded face)</option>
+                <!-- Add other relevant models -->
+            </select>
+        </div>
+        <div>
+            <label for="inputImageUpload">Upload Image:</label>
+            <input type="file" id="inputImageUpload" accept="image/*">
+            <img id="inputImagePreview" src="#" alt="Input Image Preview" style="display:none; max-width: 256px; max-height: 256px; margin-top:10px; border:1px solid #ccc;">
+        </div>
+        <div>
+            <label for="img2imgPromptInput">Prompt:</label>
+            <textarea id="img2imgPromptInput" placeholder="Enter prompt to guide the transformation" rows="3" cols="50"></textarea>
+        </div>
+        <div>
+            <label for="imageStrengthInput">Image Strength (0-1):</label>
+            <input type="number" id="imageStrengthInput" step="0.01" min="0" max="1" placeholder="e.g., 0.75 (how much to change original)">
+        </div>
+        <div>
+            <label for="img2imgSeedInput">Seed:</label>
+            <input type="number" id="img2imgSeedInput" placeholder="Leave blank for random">
+            <button id="img2imgRandomSeedButton" type="button" style="margin-left: 5px;">Random</button>
+        </div>
+         <div>
+            <label for="img2imgGuidanceScaleInput">Guidance Scale (CFG):</label>
+            <input type="number" id="img2imgGuidanceScaleInput" step="0.1" placeholder="e.g., 5.0">
+        </div>
+        <div>
+            <label for="img2imgNumStepsInput">Number of Inference Steps:</label>
+            <input type="number" id="img2imgNumStepsInput" placeholder="e.g., 20">
+        </div>
+        <div>
+            <button id="generateImg2ImgButton">Generate Image-to-Image</button>
+        </div>
+    </div>
+
+    <div id="statusArea" style="margin-top: 20px; padding: 10px; border: 1px dashed #ccc; min-height: 40px; background-color: #f9f9f9;"></div>
+
+    <div id="imageResultArea" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        <!-- Results will be dynamically added here -->
+        <!-- Example of a single result item structure:
+        <div class="result-item" style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #fff; width: fit-content; max-width: 532px;">
+            <img src="https://fal.ai/models/fast-sdxl/meta/hero.png" alt="Generated Image" class="result-image" style="max-width: 512px; max-height: 512px; display: block; margin-bottom: 10px;">
+            <div class="result-params" style="font-size: 0.9em; margin-bottom: 10px;">
+                <p><strong>Mode:</strong> <span class="param-mode">Text-to-Image</span></p>
+                <p><strong>Model:</strong> <span class="param-model">fal-ai/fast-sdxl</span></p>
+                <p><strong>Prompt:</strong> <span class="param-prompt">A beautiful landscape painting</span></p>
+                <p><strong>Negative Prompt:</strong> <span class="param-negative-prompt">blurry</span></p>
+                <p><strong>Seed:</strong> <span class="param-seed">12345</span></p>
+                <p><strong>CFG Scale:</strong> <span class="param-cfg">7.5</span></p>
+                <p><strong>Steps:</strong> <span class="param-steps">30</span></p>
+                <p><strong>Strength:</strong> <span class="param-strength">0.8 (Img2Img)</span></p>
+            </div>
+            <div class="result-actions" style="display: flex; gap: 10px;">
+                <button class="download-btn">Download</button>
+                <button class="use-as-input-btn">Use for Img2Img</button>
+                <button class="send-to-inpaint-btn">Send to Inpaint</button>
+                <button class="send-to-upscale-btn">Send to Upscale</button>
+            </div>
+        </div>
+        -->
+    </div>
+
+    <div id="inpaintControls" style="display:none;">
+        <h2>Inpainting Controls</h2>
+        <div>
+            <label for="inpaintModelSelection">Select Inpainting Model:</label>
+            <select id="inpaintModelSelection" name="inpaintModel">
+                <option value="fal-ai/sdxl-inpainting-placeholder">SDXL Inpainting (Placeholder)</option>
+                <option value="fal-ai/stable-diffusion-v1-5-inpainting">Stable Diffusion v1.5 Inpainting</option>
+                <!-- Add other relevant models -->
+            </select>
+        </div>
+        <div>
+            <label for="inpaintImageUpload">Upload Image for Inpainting:</label>
+            <input type="file" id="inpaintImageUpload" accept="image/*">
+        </div>
+        <div id="canvasContainer" style="position: relative; width: 512px; height: 512px; border: 1px solid black; margin-top: 10px; margin-bottom: 10px; background-color: #eee;">
+            <canvas id="imageCanvas" width="512" height="512" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+            <canvas id="maskCanvas" width="512" height="512" style="position: absolute; left: 0; top: 0; z-index: 2; opacity: 0.6; cursor: crosshair;"></canvas>
+        </div>
+        <div>
+            <label for="brushSize">Brush Size:</label>
+            <input type="range" id="brushSize" min="5" max="80" value="30" style="vertical-align: middle;"> <span id="brushSizeValue">30px</span>
+            <button id="clearMaskButton" type="button" style="margin-left: 15px;">Clear Mask</button>
+        </div>
+        <div>
+            <label for="inpaintPromptInput">Inpainting Prompt:</label>
+            <textarea id="inpaintPromptInput" placeholder="What to generate in the masked (painted) area?" rows="3" cols="50"></textarea>
+        </div>
+        <div>
+            <label for="inpaintSeedInput">Seed:</label>
+            <input type="number" id="inpaintSeedInput" placeholder="Leave blank for random">
+            <button id="inpaintRandomSeedButton" type="button" style="margin-left: 5px;">Random</button>
+        </div>
+        <!-- Add other relevant parameters like negative_prompt, guidance_scale, num_steps if supported by model -->
+        <div>
+            <button id="generateInpaintButton">Generate Inpainting</button>
+        </div>
+    </div>
+
+    <div id="upscaleControls" style="display:none;">
+        <h2>Image Upscaling Controls</h2>
+        <div>
+            <label for="upscaleModelSelection">Select Upscaler Model:</label>
+            <select id="upscaleModelSelection" name="upscaleModel">
+                <option value="fal-ai/esrgan-placeholder">ESRGAN Upscaler (Placeholder)</option>
+                <option value="fal-ai/real-esrgan-animevideo">Real-ESRGAN AnimeVideo</option>
+                <option value="fal-ai/swinir">SwinIR Upscaler</option>
+                <!-- Add other relevant models -->
+            </select>
+        </div>
+        <div>
+            <label for="upscaleImageUpload">Upload Image to Upscale:</label>
+            <input type="file" id="upscaleImageUpload" accept="image/*">
+            <img id="upscaleImagePreview" src="#" alt="Image Preview for Upscaling" style="display:none; max-width: 256px; max-height: 256px; margin-top:10px; border:1px solid #ccc;">
+        </div>
+        <!-- Optional: Upscale factor or target resolution could be added here -->
+        <!--
+        <div>
+            <label for="upscaleFactor">Upscale Factor (if supported by model):</label>
+            <input type="number" id="upscaleFactor" placeholder="e.g., 2 or 4">
+        </div>
+        -->
+        <div>
+            <button id="generateUpscaleButton">Upscale Image</button>
+        </div>
+    </div>
+
+    <div id="bgRemoveControls" style="display:none;">
+        <h2>Background Removal Controls</h2>
+        <div>
+            <label for="bgRemoveModelSelection">Select Background Removal Model:</label>
+            <select id="bgRemoveModelSelection" name="bgRemoveModel">
+                <option value="fal-ai/transparent-background-placeholder">Transparent Background (Placeholder)</option>
+                <option value="fal-ai/remove-background">Fal Remove Background</option>
+                <!-- Add other relevant models like Rembg, etc. -->
+            </select>
+        </div>
+        <div>
+            <label for="bgRemoveImageUpload">Upload Image for Background Removal:</label>
+            <input type="file" id="bgRemoveImageUpload" accept="image/*">
+            <img id="bgRemoveImagePreview" src="#" alt="Image Preview for BG Removal" style="display:none; max-width: 256px; max-height: 256px; margin-top:10px; border:1px solid #ccc;">
+        </div>
+        <div>
+            <button id="generateBgRemoveButton">Remove Background</button>
+        </div>
+    </div>
+
+    <hr style="margin-top: 30px; margin-bottom: 30px;">
+
+    <div id="historySection" style="margin-top: 20px;">
+        <h2>Generation History</h2>
+        <button id="clearHistoryButton" type="button">Clear All History</button>
+        <div id="historyGallery" style="display: flex; flex-wrap: wrap; gap: 10px; max-height: 320px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-top:10px; background-color: #f0f0f0; min-height: 120px;">
+            <!-- History items (thumbnails) will be added here -->
+            <!-- Example history item:
+            <div class="history-item" data-history-id="..." style="width: 100px; border: 1px solid #999; padding: 5px; background-color: #fff; position: relative;">
+                <img src="thumbnail_url_or_full_url" alt="History image" style="width: 100%; height: 100px; object-fit: cover; display:block;">
+                <div class="history-item-actions" style="position: absolute; top: 2px; right: 2px; display: flex; gap: 2px; flex-direction: column;">
+                     <button class="delete-history-item-btn" title="Delete" style="padding: 2px 4px; font-size:0.7em;">X</button>
+                     <button class="reload-history-params-btn" title="Reload" style="padding: 2px 4px; font-size:0.7em;">&#x21BB;</button>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
