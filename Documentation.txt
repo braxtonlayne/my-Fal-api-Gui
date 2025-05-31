@@ -1,0 +1,3420 @@
+Introduction
+fal.ai is a generative media platform designed for developers, offering high-performance AI model inference and training capabilities. The platform specializes in running diffusion models with production-ready APIs and interactive UI playgrounds.
+
+Key features:
+Ready-to-use AI inference APIs optimized for speed and scalability
+Serverless deployment options for custom AI models
+Interactive UI playgrounds for model experimentation
+Specialized in image generation through the Flux API
+Enterprise features including private models and preference fine-tuning capabilities
+The platform aims to provide developers with the fastest and most reliable infrastructure for integrating AI-powered media generation into their applications, with a focus on real-time user experiences.
+
+Quickstart with fal
+In this example, we’ll be using one of our most popular model endpoints.
+
+Before we proceed, you need to create an API key.
+
+This key will be used to authenticate your requests to the fal API.
+
+Javascript
+Python
+Terminal window
+npm install --save @fal-ai/client
+
+Javascript
+Python
+fal.config({
+  credentials: "PASTE_YOUR_FAL_KEY_HERE",
+});
+
+Now you can call our Model API endpoint using the fal client:
+
+Javascript
+Python
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/flux/dev", {
+  input: {
+    prompt:
+      "Photo of a rhino dressed suit and tie sitting at a table in a bar with a bar stools, award winning photography, Elke vogelsang",
+  },
+});
+
+We have made other popular models such as Flux Realism, Flux Lora Training SDXL Finetunes, Stable Video Diffusion, ControlNets, Whisper and more available as ready-to-use APIs so that you can easily integrate them into your applications.
+
+fal-ai/ flux/schnell
+text-to-image
+FLUX.1 [schnell] is a 12 billion parameter flow transformer that generates high-quality images from text in 1 to 4 steps, suitable for personal and commercial use.
+
+optimized
+fal-ai/ flux-pro/v1.1-ultra
+text-to-image
+FLUX1.1 [pro] ultra is the newest version of FLUX1.1 [pro], maintaining professional-grade image quality while delivering up to 2K resolution with improved photo realism.
+
+flux
+2k
+realism
+Check out our Model Playgrounds to tinker with these models and let us know on our Discord if you want to see other ones listed.
+
+Once you find a model that you want to use, you can grab its URL from the “API” tab. The API tab provides some important information about the model including its source code and examples of how you can call it.
+
+
+Generating Images from Text
+How to Generate Images using the fal API
+To generate images using the fal API, you need to send a request to the appropriate endpoint with the desired input parameters. The API uses pre-trained models to generate images based on the provided text prompt. This allows you to create images by simply describing what you want in natural language.
+
+Here’s an example of how to generate an image using the fal API from text:
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/flux/dev", {
+  input: {
+    prompt: "a face of a cute puppy, in the style of pixar animation",
+  },
+});
+
+How to select the model to use
+fal offers a variety of image generation models. You can select the model that best fits your needs based on the style and quality of the images you want to generate. Here are some of the available models:
+
+fal-ai/flux/dev: FLUX.1 [dev] is a 12 billion parameter flow transformer that generates high-quality images from text. It is suitable for personal and commercial use.
+fal-ai/recraft-v3: Recraft V3 is a text-to-image model with the ability to generate long texts, vector art, images in brand style, and much more. As of today, it is SOTA in image generation, proven by Hugging Face’s industry-leading Text-to-Image Benchmark by Artificial Analysis.
+fal-ai/stable-diffusion-v35-large: Stable Diffusion 3.5 Large is a Multimodal Diffusion Transformer (MMDiT) text-to-image model that features improved performance in image quality, typography, complex prompt understanding, and resource-efficiency.
+To select a model, simply specify the model ID in the subscribe method as shown in the example above. You can find more models and their descriptions in the Text to Image Models page.
+
+Generating Videos from Image
+How to Generate Videos using the fal API
+fal offers a simple and easy-to-use API that allows you to generate videos from your images using pre-trained models. This endpoint is perfect for creating video clips from your images for various use cases such as social media, marketing, and more.
+
+Here is an example of how to generate videos using the fal API:
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/minimax-video/image-to-video", {
+  input: {
+    prompt: "A stylish woman walks down a Tokyo street filled with warm glowing neon and animated city signage.",
+    image_url: "https://fal.media/files/elephant/8kkhB12hEZI2kkbU8pZPA_test.jpeg"
+  },
+});
+
+How to select the model to use
+fal offers a variety of video generation models. You can select the model that best fits your needs based on the style and quality of the images you want to generate. Here are some of the available models:
+
+fal-ai/minimax-video: Generate video clips from your images using MiniMax Video model.
+fal-ai/luma-dream-machine: Generate video clips from your images using Luma Dream Machine v1.5
+fal-ai/kling-video/v1/standard: Generate video clips from your images using Kling 1.0
+To select a model, simply specify the model ID in the subscribe method as shown in the example above. You can find more models and their descriptions in the Image to Video Models page.
+
+Convert Speech to Text
+How to Convert Speeches using the fal API
+To convert speeches to text using the fal API, you need to send a request to the appropriate endpoint with the desired input parameters. The API uses pre-trained models to convert speeches to text based on the provided audio file. This allows you to convert speeches to text by simply providing the audio file.
+
+Here is an example of how to convert speeches to text using the fal API:
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/whisper", {
+  input: {
+    audio_url: "https://storage.googleapis.com/falserverless/model_tests/whisper/dinner_conversation.mp3"
+  },
+});
+
+How to select the model to use
+fal offers a variety of speech-to-text models. You can select the model that best fits your needs based on the quality and accuracy of the speech-to-text conversion. Here are some of the available models:
+
+fal-ai/whisper: Whisper is a model for speech transcription and translation.
+fal-ai/wizper: Wizper is Whisper v3 Large — but optimized by our inference wizards. Same WER, double the performance!
+To select a model, simply specify the model ID in the subscribe method as shown in the example above. You can find more models and their descriptions in the Text to Image Models page.
+
+
+How to use LLMs
+fal provides an easy-to-use API for generating text using Language Models (LLMs). You can use the fal-ai/any-llm endpoint to generate text based on a given prompt and model.
+
+Here’s an example of how to use the fal-ai/any-llm endpoint to generate text using the anthropic/claude-3.5-sonnet model:
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/any-llm", {
+  input: {
+    model: "anthropic/claude-3.5-sonnet",
+    prompt: "What is the meaning of life?"
+  },
+});
+
+How to select LLM model to use
+fal offers a variety of LLM models. You can select the model that best fits your needs based on the style and quality of the text you want to generate. Here are some of the available models:
+
+anthropic/claude-3.5-sonnet: Claude 3.5 Sonnet
+google/gemini-pro-1.5: Gemini Pro 1.5
+meta-llama/llama-3.2-3b-instruct: Llama 3.2 3B Instruct
+openai/gpt-4o: GPT-4o
+To select a model, simply specify the model ID in the model field as shown in the example above. You can find more LLMs in the Any LLM page.
+
+Model Endpoints
+Model endpoints are the entry point to interact with the fal API. They are exposed through simple HTTP APIs that can be called from any programming language.
+
+In the next sections you will learn how to call these endpoints through our Queue system and how to get the results.
+
+We also offer clients for some of the popular programming languages used by our community.
+
+Queue
+For requests that take longer than several seconds, as it is usually the case with AI applications, we have built a queue system.
+
+Utilizing our queue system offers you a more granulated control to handle unexpected surges in traffic. It further provides you with the capability to cancel requests if needed and grants you the observability to monitor your current position within the queue. Besides that using the queue system spares you from the headache of keeping around long running https requests.
+
+Queue endpoints
+You can interact with all queue features through a set of endpoints added to you function URL via the queue subdomain. The endpoints are as follows:
+
+Endpoint	Method	Description
+queue.fal.run/{appId}	POST	Adds a request to the queue
+queue.fal.run/{appId}/requests/{request_id}/status	GET	Gets the status of a request
+queue.fal.run/{appId}/requests/{request_id}/status/stream	GET	Streams the status of a request until it’s completed
+queue.fal.run/{appId}/requests/{request_id}	GET	Gets the response of a request
+queue.fal.run/{appId}/requests/{request_id}/cancel	PUT	Cancels a request that has not started processing
+For instance, should you want to use the curl command to submit a request to the aforementioned endpoint and add it to the queue, your command would appear as follows:
+
+Terminal window
+curl -X POST https://queue.fal.run/fal-ai/fast-sdxl \
+  -H "Authorization: Key $FAL_KEY" \
+  -d '{"prompt": "a cat"}'
+
+Here’s an example of a response with the request_id:
+
+{
+  "request_id": "80e732af-660e-45cd-bd63-580e4f2a94cc",
+  "response_url": "https://queue.fal.run/fal-ai/fast-sdxl/requests/80e732af-660e-45cd-bd63-580e4f2a94cc",
+  "status_url": "https://queue.fal.run/fal-ai/fast-sdxl/requests/80e732af-660e-45cd-bd63-580e4f2a94cc/status",
+  "cancel_url": "https://queue.fal.run/fal-ai/fast-sdxl/requests/80e732af-660e-45cd-bd63-580e4f2a94cc/cancel"
+}
+
+The payload helps you to keep track of your request with the request_id, and provides you with the necessary information to get the status of your request, cancel it or get the response once it’s ready, so you don’t have to build these endpoints yourself.
+
+Request status
+Once you have the request id you may use this request id to get the status of the request. This endpoint will give you information about your request’s status, it’s position in the queue or the response itself if the response is ready.
+
+Terminal window
+curl -X GET https://queue.fal.run/fal-ai/fast-sdxl/requests/{request_id}/status
+
+Here’s an example of a response with the IN_QUEUE status:
+
+{
+  "status": "IN_QUEUE",
+  "queue_position": 0,
+  "response_url": "https://queue.fal.run/fal-ai/fast-sdxl/requests/80e732af-660e-45cd-bd63-580e4f2a94cc"
+}
+
+Status types
+Queue status can have one of the following types and their respective properties:
+
+IN_QUEUE:
+
+queue_position: The current position of the task in the queue.
+response_url: The URL where the response will be available once the task is processed.
+IN_PROGRESS:
+
+logs: An array of logs related to the request. Note that it needs to be enabled, as explained in the next section.
+response_url: The URL where the response will be available.
+COMPLETED:
+
+logs: An array of logs related to the request. Note that it needs to be enabled, as explained in the next section.
+response_url: The URL where the response is available.
+Logs
+Logs are disabled by default. In order to enable logs for your request, you need to send the logs=1 query parameter when getting the status of your request. For example:
+
+Terminal window
+curl -X GET https://queue.fal.run/fal-ai/fast-sdxl/requests/{request_id}/status?logs=1
+
+When enabled, the logs attribute in the queue status contains an array of log entries, each represented by the RequestLog type. A RequestLog object has the following attributes:
+
+message: a string containing the log message.
+level: the severity of the log, it can be one of the following:
+STDERR | STDOUT | ERROR | INFO | WARN | DEBUG
+source: indicates the source of the log.
+timestamp: a string representing the time when the log was generated.
+These logs offer valuable insights into the status and progress of your queued tasks, facilitating effective monitoring and debugging.
+
+Streaming status
+If you want to keep track of the status of your request in real-time, you can use the streaming endpoint. The response is text/event-stream and each event is a JSON object with the status of the request exactly as the non-stream endpoint.
+
+This endpoint will keep the connection open until the status of the request changes to COMPLETED.
+
+It supports the same logs query parameter as the status.
+
+Terminal window
+curl -X GET https://queue.fal.run/fal-ai/fast-sdxl/requests/{request_id}/status/stream
+
+Here is an example of a stream of status updates:
+
+Terminal window
+$ curl https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status/stream?logs=1 --header "Authorization: Key $FAL_KEY"
+
+data: {"status": "IN_PROGRESS", "request_id": "3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "response_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "status_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status", "cancel_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/cancel", "logs": [], "metrics": {}}
+
+data: {"status": "IN_PROGRESS", "request_id": "3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "response_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "status_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status", "cancel_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/cancel", "logs": [{"timestamp": "2024-12-20T15:37:17.120314", "message": "INFO:TRYON:Preprocessing images...", "labels": {}}, {"timestamp": "2024-12-20T15:37:17.286519", "message": "INFO:TRYON:Running try-on model...", "labels": {}}], "metrics": {}}
+
+data: {"status": "IN_PROGRESS", "request_id": "3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "response_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "status_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status", "cancel_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/cancel", "logs": [], "metrics": {}}
+
+: ping
+
+data: {"status": "IN_PROGRESS", "request_id": "3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "response_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "status_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status", "cancel_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/cancel", "logs": [], "metrics": {}}
+
+data: {"status": "COMPLETED", "request_id": "3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "response_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf", "status_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/status", "cancel_url": "https://queue.fal.run/fashn/tryon/requests/3e3e5b55-45fb-4e5c-b4d1-05702dffc8bf/cancel", "logs": [{"timestamp": "2024-12-20T15:37:32.161184", "message": "INFO:TRYON:Finished running try-on model.", "labels": {}}], "metrics": {"inference_time": 17.795265674591064}}
+
+Cancelling a request
+If your request has not started processing (status is IN_QUEUE), you may attempt to cancel it.
+
+Terminal window
+curl -X PUT https://queue.fal.run/fal-ai/fast-sdxl/requests/{request_id}/cancel
+
+If the request has not already started processing, you will get a 202 Accepted response with the following body:
+
+{
+  "status": "CANCELLATION_REQUESTED"
+}
+
+Note that a request may still be executed after getting this response if it was very late in the queue process.
+
+If the request is already processed, you will get a 400 Bad Request response with this body:
+
+{
+  "status": "ALREADY_COMPLETED"
+}
+
+Getting the response
+Once you get the COMPLETED status, the response will be available along with its logs.
+
+Terminal window
+curl -X GET https://queue.fal.run/fal-ai/fast-sdxl/requests/{request_id}
+
+Here’s an example of a response with the COMPLETED status:
+
+{
+  "status": "COMPLETED",
+  "logs": [
+    {
+      "message": "2020-05-04 14:00:00.000000",
+      "level": "INFO",
+      "source": "stdout",
+      "timestamp": "2020-05-04T14:00:00.000000Z"
+    }
+  ],
+  "response": {
+    "message": "Hello World!"
+  }
+}
+
+A simple queue recipe
+
+Submit your request and let our client handle the status tracking for you. The next section details how the fal client simplifies building apps with fal functions.
+
+
+HTTP over WebSockets
+For applications that require real-time interaction or handle streaming, fal offers a WebSocket-based integration. This allows you to establish a persistent connection and stream data back and forth between your client and the fal API. Using the same API as the HTTP apps.
+
+WebSocket Endpoint
+To utilize the WebSocket functionality, connect to the HTTP app you want to use but using the new ws.fal.run solution:
+
+wss://ws.fal.run/{appId}
+
+Communication Protocol
+Once connected, the communication follows a specific protocol with JSON messages for control flow and raw data for the actual response stream:
+
+Payload Message: Send a JSON message containing the payload for your application. This is equivalent to the request body you would send to the HTTP endpoint.
+
+Start Metadata: Receive a JSON message containing the HTTP response headers from your application. This allows you to understand the type and structure of the incoming response stream.
+
+Response Stream: Receive the actual response data as a sequence of messages. These can be binary chunks for media content or a JSON object for structured data, depending on the Content-Type header.
+
+End Metadata: Receive a final JSON message indicating the end of the response stream. This signals that the request has been fully processed and the next payload will be processed.
+
+Example Interaction
+Here’s an example of a typical interaction with the WebSocket API:
+
+Client Sends (Payload Message):
+
+{"prompt": "generate a 10-second audio clip of a cat purring"}
+
+Server Responds (Start Metadata):
+
+{
+  "type": "start",
+  "request_id": "5d76da89-5d75-4887-a715-4302bf435614",
+  "status": 200,
+  "headers": {
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "Transfer-Encoding": "chunked",
+    // ...
+  }
+}
+
+Server Sends (Response Stream):
+
+<binary audio data chunk 1>
+<binary audio data chunk 2>
+...
+<binary audio data chunk N>
+
+Server Sends (Completion Message):
+
+{
+  "type": "end",
+  "request_id": "5d76da89-5d75-4887-a715-4302bf435614",
+  "status": 200,
+  "time_to_first_byte_seconds": 0.577083
+}
+
+Benefits of WebSockets
+
+Real-time Updates: Ideal for applications that require immediate feedback, such as interactive AI models or live data visualization.
+Efficient Data Transfer: Enables streaming large data volumes without the overhead of multiple HTTP requests.
+Persistent Connection: Reduces latency and improves performance by maintaining an open connection throughout the interaction.
+This WebSocket integration provides a powerful mechanism for building dynamic and responsive AI applications on the fal platform. By leveraging the streaming capabilities, you can unlock new possibilities for creative and interactive user experiences.
+
+Example Program
+For instance, should you want to make fast prompts to any LLM, you can use fal-ai/any-llm.
+
+import fal.apps
+
+with fal.apps.ws("fal-ai/any-llm") as connection:
+    for i in range(3):
+        connection.send(
+            {
+                "model": "google/gemini-flash-1.5",
+                "prompt": f"What is the meaning of life? Respond in {i} words.",
+            }
+        )
+
+    # they should be in order
+    for i in range(3):
+        import json
+
+        response = json.loads(connection.recv())
+        print(response)
+
+And running this program would output:
+
+Terminal window
+{'output': '(Silence)\n', 'partial': False, 'error': None}
+{'output': 'Growth\n', 'partial': False, 'error': None}
+{'output': 'Personal fulfillment.\n', 'partial': False, 'error': None}
+
+Example Program with Stream
+The fal-ai/any-llm/stream model is a streaming model that can generate text in real-time. Here’s an example of how you can use it:
+
+with fal.apps.ws("fal-ai/any-llm/stream") as connection:
+    # NOTE: this app responds in 'text/event-stream' format
+    # For example:
+    #
+    #    event: event
+    #    data: {"output": "Growth", "partial": true, "error": null}
+
+    for i in range(3):
+        connection.send(
+            {
+                "model": "google/gemini-flash-1.5",
+                "prompt": f"What is the meaning of life? Respond in {i+1} words.",
+            }
+        )
+
+    for i in range(3):
+        for bs in connection.stream():
+            lines = bs.decode().replace("\r\n", "\n").split("\n")
+
+            event = {}
+            for line in lines:
+                if not line:
+                    continue
+                key, value = line.split(":", 1)
+                event[key] = value.strip()
+
+            print(event["data"])
+
+        print("----")
+
+And running this program would output:
+
+Terminal window
+{"output": "Perspective", "partial": true, "error": null}
+{"output": "Perspective.\n", "partial": true, "error": null}
+{"output": "Perspective.\n", "partial": true, "error": null}
+{"output": "Perspective.\n", "partial": false, "error": null}
+----
+{"output": "Find", "partial": true, "error": null}
+{"output": "Find meaning.\n", "partial": true, "error": null}
+{"output": "Find meaning.\n", "partial": true, "error": null}
+{"output": "Find meaning.\n", "partial": false, "error": null}
+----
+{"output": "Be", "partial": true, "error": null}
+{"output": "Be, love, grow.\n", "partial": true, "error": null}
+{"output": "Be, love, grow.\n", "partial": true, "error": null}
+{"output": "Be, love, grow.\n", "partial": false, "error": null}
+----
+
+
+Webhooks
+Webhooks work in tandem with the queue system explained above, it is another way to interact with our queue. By providing us a webhook endpoint you get notified when the request is done as opposed to polling it.
+
+Here is how this works in practice, it is very similar to submitting something to the queue but we require you to pass an extra fal_webhook query parameter.
+
+To utilize webhooks, your requests should be directed to the queue.fal.run endpoint, instead of the standard fal.run. This distinction is crucial for enabling webhook functionality, as it ensures your request is handled by the queue system designed to support asynchronous operations and notifications.
+
+Terminal window
+curl --request POST \
+  --url 'https://queue.fal.run/fal-ai/flux/dev?fal_webhook=https://url.to.your.app/api/fal/webhook' \
+  --header "Authorization: Key $FAL_KEY" \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "prompt": "Photo of a cute dog"
+}'
+
+The request will be queued and you will get a response with the request_id and gateway_request_id:
+
+{
+  "request_id": "024ca5b1-45d3-4afd-883e-ad3abe2a1c4d",
+  "gateway_request_id": "024ca5b1-45d3-4afd-883e-ad3abe2a1c4d"
+}
+
+These two will be mostly the same, but if the request failed and was retried, gateway_request_id will have the value of the last tried request, while request_id will be the value used in the queue API.
+
+Once the request is done processing in the queue, a POST request is made to the webhook URL, passing the request info and the resulting payload. The status indicates whether the request was successful or not.
+
+When to use it?
+
+Webhooks are particularly useful for requests that can take a while to process and/or the result is not needed immediately. For example, if you are training a model, which is a process than can take several minutes or even hours, webhooks could be the perfect tool for the job.
+
+Successful result
+The following is an example of a successful request:
+
+{
+  "request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "gateway_request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "status": "OK",
+  "payload": {
+    "images": [
+      {
+        "url": "https://url.to/image.png",
+        "content_type": "image/png",
+        "file_name": "image.png",
+        "file_size": 1824075,
+        "width": 1024,
+        "height": 1024
+      }
+    ],
+    "seed": 196619188014358660
+  }
+}
+
+Response errors
+When an error happens, the status will be ERROR. The error property will contain a message and the payload will provide the error details. For example, if you forget to pass the required model_name parameter, you will get the following response:
+
+{
+  "request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "gateway_request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "status": "ERROR",
+  "error": "Invalid status code: 422",
+  "payload": {
+    "detail": [
+      {
+        "loc": ["body", "prompt"],
+        "msg": "field required",
+        "type": "value_error.missing"
+      }
+    ]
+  }
+}
+
+Payload errors
+For the webhook to include the payload, it must be valid JSON. So if there is an error serializing it, payload is set to null and a payload_error will include details about the error.
+
+{
+  "request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "gateway_request_id": "123e4567-e89b-12d3-a456-426614174000",
+  "status": "OK",
+  "payload": null,
+  "payload_error": "Response payload is not JSON serializable. Either return a JSON serializable object or use the queue endpoint to retrieve the response."
+}
+
+Retry policy
+If the webhook fails to deliver the payload, it will retry 10 times in the span of 2 hours.
+
+Server-side integration
+Although the endpoints are designed to be called directly from the client, it is not safe to keep API Keys in client side code. Most use cases require developers to create their own server-side APIs, that call a 3rd party service, fal, and then return the result to the client. It is a straightforward process, but always get in the way of developers and teams trying to focus on their own business, their own idea.
+
+Therefore, we implemented the client libraries to support a proxy mode, which allows you to use the client libraries in the client, while keeping the API Keys in your own server-side code.
+
+Ready-to-use proxy implementations
+We provide ready-to-use proxy implementations for the following languages/frameworks:
+
+Node.js with Next.js: a Next.js API route handler that can be used in any Next.js app. It supports both Page and App routers. We use it ourselves in all of our apps in production.
+Node.js with Express: an Express route handler that can be used in any Express app. You can also implement custom logic and compose together with your own handlers.
+That’s it for now, but we are looking out for our community needs and will add more implementations in the future. If you have any requests, join our community in our Discord server.
+
+The proxy formula
+In case fal doesn’t provide a plug-and-play proxy implementation for your language/framework, you can use the following formula to implement your own proxy:
+
+Provide a single endpoint that will ingest all requests from the client (e.g. /api/fal/proxy is commonly used as the default route path).
+The endpoint must support both GET and POST requests. When an unsupported HTTP method is used, the proxy must return status code 405, Method Not Allowed.
+The URL the proxy needs to call is provided by the x-fal-target-url header. If the header is missing, the proxy must return status code 400, Bad Request. In case it doesn’t point to a valid URL, or the URL’s domain is not *.fal.ai or *.fal.run, the proxy must return status code 412, Precondition Failed.
+The request body, when present, is always in the JSON format - i.e. content-type header is application/json. Any other type of content must be rejected with status code 415, Unsupported Media Type.
+The proxy must add the authorization header in the format of Key <your-api-key> to the request it sends to the target URL. Your API key should be resolved from the environment variable FAL_KEY.
+The response from the target URL will always be in the JSON format, the proxy must return the same response to the client.
+The proxy must return the same HTTP status code as the target URL.
+The proxy must return the same headers as the target URL, except for the content-length and content-encoding headers, which should be set by the your own server/framework automatically.
+Use the power of LLMs
+
+The formula above was written in a way that should be easy to follow, including by LLMs. Try using ChatGPT or Co-pilot with the formula above and your should get a good starting point for your own implementation. Let us know if you try that!
+
+Configure the client
+To use the proxy, you need to configure the client to use the proxy endpoint. You can do that by setting the proxyUrl option in the client configuration:
+
+import { fal } from "@fal-ai/client";
+
+fal.config({
+  proxyUrl: "/api/fal/proxy",
+});
+
+Example implementation
+You can find a reference implementation of the proxy formula using TypeScript, which supports both Express and Next.js, in serverless-js/libs/proxy/src/index.ts.
+
+
+Workflow endpoints
+Workflows are a way to chain multiple models together to create a more complex pipeline. This allows you to create a single endpoint that can take an input and pass it through multiple models in sequence. This is useful for creating more complex models that require multiple steps, or for creating a single endpoint that can handle multiple tasks.
+
+Beta alert
+
+Workflows are currently in beta, join our Discord to get the latest updates and also share any issues or feedback you might have.
+
+Workflow as an API
+Workflow APIs work the same way as other model endpoints, you can simply send a request and get a response back. However, it is common for workflows to contain multiple steps and produce intermediate results, as each step contains their own response that could be relevant in your use-case.
+
+Therefore, workflows benefit from the streaming feature, which allows you to get partial results as they are being generated.
+
+Workflow events
+The workflow API will trigger a few events during its execution, these events can be used to monitor the progress of the workflow and get intermediate results. Below are the events that you can expect from a workflow stream:
+
+The submit event
+This events is triggered every time a new step has been submitted to execution. It contains the app_id, request_id and the node_id.
+
+{
+  "type": "submit",
+  "node_id": "stable_diffusion_xl",
+  "app_id": "fal-ai/fast-sdxl",
+  "request_id": "d778bdf4-0275-47c2-9f23-16c27041cbeb"
+}
+
+The completion event
+This event is triggered upon the completion of a specific step.
+
+{
+  "type": "completion",
+  "node_id": "stable_diffusion_xl",
+  "output": {
+    "images": [
+      {
+        "url": "https://fal.media/result.jpeg",
+        "width": 1024,
+        "height": 1024,
+        "content_type": "image/jpeg"
+      }
+    ],
+    "timings": { "inference": 2.1733 },
+    "seed": 6252023,
+    "has_nsfw_concepts": [false],
+    "prompt": "a cute puppy"
+  }
+}
+
+The output event
+The output event means that the workflow has completed and the final result is ready.
+
+{
+  "type": "output",
+  "output": {
+    "images": [
+      {
+        "url": "https://fal.media/result.jpeg",
+        "width": 1024,
+        "height": 1024,
+        "content_type": "image/jpeg"
+      }
+    ]
+  }
+}
+
+The error event
+The error event is triggered when an error occurs during the execution of a step. The error object contains the error.status with the HTTP status code, an error message as well as error.body with the underlying error serialized.
+
+{
+  "type": "error",
+  "node_id": "stable_diffusion_xl",
+  "message": "Error while fetching the result of the request d778bdf4-0275-47c2-9f23-16c27041cbeb",
+  "error": {
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "loc": ["body", "num_images"],
+          "msg": "ensure this value is less than or equal to 8",
+          "type": "value_error.number.not_le",
+          "ctx": { "limit_value": 8 }
+        }
+      ]
+    }
+  }
+}
+
+Example
+A cool and simple example of the power of workflows is workflows/fal-ai/sdxl-sticker, which consists of three steps:
+
+Generates an image using fal-ai/fast-sdxl.
+Remove the background of the image using fal-ai/imageutils/rembg.
+Converts the image to a sticker using fal-ai/face-to-sticker.
+What could be a tedious process of running and coordinating three different models is now a single endpoint that you can call with a single request.
+
+Javascript
+python
+python (async)
+Swift
+import { fal } from "@fal-ai/client";
+
+const stream = await fal.stream("workflows/fal-ai/sdxl-sticker", {
+input: {
+  prompt: "a face of a cute puppy, in the style of pixar animation",
+},
+});
+
+for await (const event of stream) {
+console.log("partial", event);
+}
+
+const result = await stream.done();
+
+console.log("final result", result);
+
+Type definitions
+Below are the type definition in TypeScript of events that you can expect from a workflow stream:
+
+type WorkflowBaseEvent = {
+  type: "submit" | "completion" | "error" | "output";
+  node_id: string;
+};
+
+export type WorkflowSubmitEvent = WorkflowBaseEvent & {
+  type: "submit";
+  app_id: string;
+  request_id: string;
+};
+
+export type WorkflowCompletionEvent<Output = any> = WorkflowBaseEvent & {
+  type: "completion";
+  app_id: string;
+  output: Output;
+};
+
+export type WorkflowDoneEvent<Output = any> = WorkflowBaseEvent & {
+  type: "output";
+  output: Output;
+};
+
+export type WorkflowErrorEvent = WorkflowBaseEvent & {
+  type: "error";
+  message: string;
+  error: any;
+};
+
+
+Client Library for JavaScript / TypeScript
+Introduction
+The client for JavaScript / TypeScript provides a seamless interface to interact with fal.
+
+Installation
+First, add the client as a dependency in your project:
+
+npm
+yarn
+pnpm
+bun
+Terminal window
+npm install --save @fal-ai/client
+
+Features
+1. Call an endpoint
+Endpoints requests are managed by a queue system. This allows fal to provide a reliable and scalable service.
+
+The subscribe method allows you to submit a request to the queue and wait for the result.
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.subscribe("fal-ai/flux/dev", {
+  input: {
+    prompt: "a cat",
+    seed: 6252023,
+    image_size: "landscape_4_3",
+    num_images: 4,
+  },
+  logs: true,
+  onQueueUpdate: (update) => {
+    if (update.status === "IN_PROGRESS") {
+      update.logs.map((log) => log.message).forEach(console.log);
+    }
+  },
+});
+
+console.log(result.data);
+console.log(result.requestId);
+
+2. Queue Management
+You can manage the queue using the following methods:
+
+Submit a Request
+Submit a request to the queue using the queue.submit method.
+
+import { fal } from "@fal-ai/client";
+
+const { request_id } = await fal.queue.submit("fal-ai/flux/dev", {
+  input: {
+    prompt: "a cat",
+    seed: 6252023,
+    image_size: "landscape_4_3",
+    num_images: 4,
+  },
+  webhookUrl: "https://optional.webhook.url/for/results",
+});
+
+This is useful when you want to submit a request to the queue and retrieve the result later. You can save the request_id and use it to retrieve the result later.
+
+Webhooks
+
+For long-running requests, such as training jobs, you can use webhooks to receive the result asynchronously. You can specify the webhook URL when submitting a request.
+
+Check Request Status
+Retrieve the status of a specific request in the queue:
+
+import { fal } from "@fal-ai/client";
+
+const status = await fal.queue.status("fal-ai/flux/dev", {
+  requestId: "764cabcf-b745-4b3e-ae38-1200304cf45b",
+  logs: true,
+});
+
+Retrieve Request Result
+Get the result of a specific request from the queue:
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.queue.result("fal-ai/flux/dev", {
+  requestId: "764cabcf-b745-4b3e-ae38-1200304cf45b",
+});
+
+console.log(result.data);
+console.log(result.requestId);
+
+3. File Uploads
+Some endpoints require files as input. However, since the endpoints run asynchronously, processed by the queue, you will need to provide URLs to the files instead of the actual file content.
+
+Luckily, the client library provides a way to upload files to the server and get a URL to use in the request.
+
+import { fal } from "@fal-ai/client";
+
+const file = new File(["Hello, World!"], "hello.txt", { type: "text/plain" });
+const url = await fal.storage.upload(file);
+
+4. Streaming
+Some endpoints support streaming:
+
+import { fal } from "@fal-ai/client";
+
+const stream = await fal.stream("fal-ai/flux/dev", {
+  input: {
+    prompt: "a cat",
+    seed: 6252023,
+    image_size: "landscape_4_3",
+    num_images: 4,
+  },
+});
+
+for await (const event of stream) {
+  console.log(event);
+}
+
+const result = await stream.done();
+
+5. Realtime Communication
+For the endpoints that support real-time inference via WebSockets, you can use the realtime client that abstracts the WebSocket connection, re-connection, serialization, and provides a simple interface to interact with the endpoint:
+
+import { fal } from "@fal-ai/client";
+
+const connection = fal.realtime.connect("fal-ai/flux/dev", {
+  onResult: (result) => {
+    console.log(result);
+  },
+  onError: (error) => {
+    console.error(error);
+  },
+});
+
+connection.send({
+  prompt: "a cat",
+  seed: 6252023,
+  image_size: "landscape_4_3",
+  num_images: 4,
+});
+
+6. Run
+The endpoints can also be called directly instead of using the queue system.
+
+Prefer the queue
+
+We do not recommend this use most use cases as it will block the client until the response is received. Moreover, if the connection is closed before the response is received, the request will be lost.
+
+import { fal } from "@fal-ai/client";
+
+const result = await fal.run("fal-ai/flux/dev", {
+  input: {
+    prompt: "a cat",
+    seed: 6252023,
+    image_size: "landscape_4_3",
+    num_images: 4,
+  },
+});
+
+console.log(result.data);
+console.log(result.requestId);
+
+API Reference
+For a complete list of available methods and their parameters, please refer to JavaScript / TypeScript API Reference documentation.
+
+Examples
+Check out some of the examples below to see real-world use cases of the client library:
+
+See fal.realtime in action with SDXL Lightning: https://github.com/fal-ai/sdxl-lightning-demo-app
+Support
+If you encounter any issues or have questions, please visit the GitHub repository or join our Discord Community.
+
+Migration from serverless-client to client
+As fal no longer uses “serverless” as part of the AI provider branding, we also made sure that’s reflected in our libraries. However, that’s not the only thing that changed in the new client. There was lot’s of improvements that happened thanks to our community feedback.
+
+So, if you were using the @fal-ai/serverless-client package, you can upgrade to the new @fal-ai/client package by following these steps:
+
+Remove the @fal-ai/serverless-client package from your project:
+Terminal window
+npm uninstall @fal-ai/serverless-client
+
+Install the new @fal-ai/client package:
+Terminal window
+npm install --save @fal-ai/client
+
+Update your imports:
+import * as fal from "@fal-ai/serverless-client";
+import { fal } from "@fal-ai/client";
+
+Now APIs return a Result<Output> type that contains the data which is the API output and the requestId. This is a breaking change from the previous version, that allows us to return extra data to the caller without future breaking changes.
+const data = fal.subscribe(endpointId, { input });
+const { data, requestId } = fal.subscribe(endpointId, { input });
+
+Note
+
+The fal object is now a named export from the package that represents a singleton instance of the FalClient and was added to make it as easy as possible to migrate from the old singleton-only client. However, starting in 1.0.0 you can create multiple instances of the FalClient with the createFalClient function.
+
+
+Key-Based Authentication
+There are two main reasons to use key-based authentication:
+
+When calling ready-to-use models
+In headless remote environments or CI/CD (where GitHub authentication is not available)
+Generating the keys
+Navigate to our dashboard keys page and generate a key from the UI fal.ai/dashboard/keys
+
+Scopes
+Scopes provide a way to control the permissions and access level of a given key. By assigning scopes to keys, you can limit the operations that each key can perform. Currently there are only two scopes, ADMIN and API. If you are just consuming ready-to-use models, we recommend that you use the API scope.
+
+API scope
+Grants access to ready-to-use models.
+ADMIN scope
+Grants full access to private models.
+Grants full access to CLI operations.
+Grants access to ready-to-use models.
+
+
+GitHub Authentication
+fal uses GitHub authentication by default which means that you need to have a GitHub account to use it.
+
+Logging in
+Installing fal Python library lets you use the fal CLI, which you can use to authenticate. In your terminal, you can run the following command:
+
+fal auth login
+
+Follow the instructions on your terminal to confirm your credentials. Once you’re done, you should get a success message in your terminal.
+
+Beta alert!
+
+fal sdk is an enterprise feature. Once you run the login command, you will get an error that you should reach out to support@fal.ai. Shoot us an email with how you are planning to use fal, and we will make sure to get you access asap.
+
+Now you’re ready to write your first fal function!
+
+Note: Your login credentials are persisted on your local machine and cannot be transferred to another machine. If you want to use fal in your CI/CD, you will need to use key-based credentials.
+
+
+Add fal.ai to your Next.js app
+You will learn how to:
+Install the fal.ai libraries
+Add a server proxy to protect your credentials
+Generate an image using SDXL
+Prerequisites
+Have an existing Next.js app or create a new one using npx create-next-app
+Have a fal.ai account
+Have an API Key. You can create one here
+1. Install the fal.ai libraries
+Using your favorite package manager, install both the @fal-ai/client and @fal-ai/server-proxy libraries.
+
+npm
+yarn
+pnpm
+Terminal window
+npm install @fal-ai/client @fal-ai/server-proxy
+
+2. Setup the proxy
+The proxy will protect your API Key and prevent it from being exposed to the client. Usually app implementation have to handle that integration themselves, but in order to make the integration as smooth as possible, we provide a drop-in proxy implementation that can be integrated with either the Page Router or the App Router.
+
+2.1. Page Router
+If you are using the Page Router (i.e. src/pages/_app.js), create an API handler in src/pages/api/fal/proxy.js (or .ts in case of TypeScript), and re-export the built-in proxy handler:
+
+export { handler as default } from "@fal-ai/server-proxy/nextjs";
+
+2.2. App Router
+If you are using the App Router (i.e. src/app/page.jsx) create a route handler in src/app/api/fal/proxy/route.js (or .ts in case of TypeScript), and re-export the route handler:
+
+import { route } from "@fal-ai/server-proxy/nextjs";
+
+export const { GET, POST } = route;
+
+2.3. Setup the API Key
+Make sure you have your API Key available as an environment variable. You can setup in your .env.local file for development and also in your hosting provider for production, such as Vercel.
+
+Terminal window
+FAL_KEY="key_id:key_secret"
+
+2.4. Custom proxy logic
+It’s common for applications to execute custom logic before or after the proxy handler. For example, you may want to add a custom header to the request, or log the request and response, or apply some rate limit. The good news is that the proxy implementation is simply a standard Next.js API/route handler function, which means you can compose it with other handlers.
+
+For example, let’s assume you want to add some analytics and apply some rate limit to the proxy handler:
+
+import { route } from "@fal-ai/server-proxy/nextjs";
+
+// Let's add some custom logic to POST requests - i.e. when the request is
+// submitted for processing
+export const POST = (req) => {
+  // Add some analytics
+  analytics.track("fal.ai request", {
+    targetUrl: req.headers["x-fal-target-url"],
+    userId: req.user.id,
+  });
+
+  // Apply some rate limit
+  if (rateLimiter.shouldLimit(req)) {
+    res.status(429).json({ error: "Too many requests" });
+  }
+
+  // If everything passed your custom logic, now execute the proxy handler
+  return route.POST(req);
+};
+
+// For GET requests we will just use the built-in proxy handler
+// But you could also add some custom logic here if you need
+export const GET = route.GET;
+
+Note that the URL that will be forwarded to server is available as a header named x-fal-target-url. Also, keep in mind the example above is just an example, rateLimiter and analytics are just placeholders.
+
+The example above used the app router, but the same logic can be applied to the page router and its handler function.
+
+3. Configure the client
+On your main file (i.e. src/pages/_app.jsx or src/app/page.jsx), configure the client to use the proxy:
+
+import { fal } from "@fal-ai/client";
+
+fal.config({
+  proxyUrl: "/api/fal/proxy",
+});
+
+Protect your API Key
+
+Although the client can be configured with credentials, use that only for rapid prototyping. We recommend you always use the proxy to avoid exposing your API Key in the client before you deploy your web application. See the server-side guide for more details.
+
+4. Generate an image
+Now that the client is configured, you can generate an image using fal.subscribe and pass the model id and the input parameters:
+
+const result = await fal.subscribe("fal-ai/flux/dev", {
+  input: {
+    prompt,
+    image_size: "square_hd",
+  },
+  pollInterval: 5000,
+  logs: true,
+  onQueueUpdate(update) {
+    console.log("queue update", update);
+  },
+});
+
+const imageUrl = result.images[0].url;
+
+See more about Flux Dev used in this example on fal.ai/models/fal-ai/flux/dev.
+
+What’s next?
+Image generation is just one of the many cool things you can do with fal. Make sure you:
+
+Check our demo application at github.com/fal-ai/serverless-js/apps/demo-nextjs-app-router
+Check all the available Model APIs
+Learn how to write your own model APIs on Introduction to serverless functions
+Read more about function endpoints on private serverless models
+Check the next page to learn how to deploy your app to Vercel
+
+Add fal.ai to your Next.js app
+You will learn how to:
+Connect a Next.js app deployed on Vercel to fal.ai
+Prerequisites
+A fal.ai account
+A Vercel account
+A Next.js app. Check the Next.js guide if you don’t have one yet.
+App deployed on Vercel. Run npx vercel in your app directory to deploy it in case you haven’t done it yet.
+Vercel official integration
+The recommended way to add fal.ai to your app deployed on Vercel is to use the official integration. You can find it in the Vercel marketplace.
+
+Click on Add integration and follow the steps. After you’re done, re-deploy your app and you’re good to go!
+
+Vercel integration
+
+Manual setup
+You can also manually add fal credentials to your Vercel environment manually.
+
+Go to your fal.ai dashboard, create an API-scoped key and copy it. Make sure you create an alias do identify which app is using it.
+Go to your app settings in Vercel and add a new environment variable called FAL_KEY with the value of the key you just copied. You can choose other names, but keep in mind that the default convention of fal-provided libraries is FAL_KEY.
+Re-deploy your app and you’re good to go!
+
+Real-Time Models
+Real-time AI is here! With the recent introduction of Latent Consistency Models (LCM) and distilled models like Stability’s SDXL Turbo and SD Turbo, it is now possible to generate images in under 100ms.
+
+This fast inference capability opens up new possibilities for application types that were previously not feasible, such as real-time creativity tools and using the camera as a real-time model input.
+
+You can find the fastest real time models in fal’s Model Registry.
+
+fal-ai/ fast-lcm-diffusion
+text-to-image
+Run SDXL at the speed of light
+
+real-time
+lcm
+fal-ai/ fast-turbo-diffusion
+text-to-image
+Run SDXL at the speed of light
+
+real-time
+optimized
+How does fal provide the fastest real-time inference?
+
+We did all the optimizations in the book.
+
+fal has built custom infrastructure and optimized the model inference to make sure these models are served to the end user as fast as possible.
+fal has a globally distributed network of GPUs to make sure the inference happens as close to the user as possible.
+We do very few hops between the user and the GPU. Our authentication service is written in Rust and deployed on the edge as close to the user and the GPUs as possible.
+Our websocket and streaming clients provide the most efficient client/server communication possible.
+We only authenticate through a jwt token, from the client directly to our services, we have built integrations to popular backend frameworks to facilitate token refreshes.
+Is fal’s real time AI inference ready for prime time?
+
+Several amazing demos and products were built using fal’s real time inference infrastructure. These demos went viral on social media and are still used by thousands of people every day.
+
+You can see an example at https://fal.ai/camera.
+
+
+Real Time Models Quickstart
+In this example, we’ll be using our most popular optimized ultra fast latent consistency model.
+
+All our Model Endpoint’s support HTTP/REST. Additionally our real-time models support WebSockets. You can use the HTTP/REST endpoint for any real time model but if you are sending back to back requests using websockets gives the best results.
+
+fal-ai/ fast-lcm-diffusion
+text-to-image
+Run SDXL at the speed of light
+
+real-time
+lcm
+fal-ai/ fast-turbo-diffusion
+text-to-image
+Run SDXL at the speed of light
+
+real-time
+optimized
+Before we proceed, you need to create your API key.
+
+import { fal } from "@fal-ai/client";
+
+fal.config({
+  credentials: "PASTE_YOUR_FAL_KEY_HERE",
+});
+
+const connection = fal.realtime.connect("fal-ai/fast-lcm-diffusion", {
+  onResult: (result) => {
+    console.log(result);
+  },
+  onError: (error) => {
+    console.error(error);
+  },
+});
+
+connection.send({
+  prompt:
+    "an island near sea, with seagulls, moon shining over the sea, light house, boats int he background, fish flying over the sea",
+  sync_mode: true,
+  image_url:
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+});
+
+You can read more about the real time clients in our real time client docs section.
+
+Note
+
+For the fastest inference speed use 512x512 input dimensions for image_url.
+
+To get the best performance from this model:
+
+Make sure the image is provided as a base64 encoded data url.
+Make sure the image_url is exactly 512x512.
+Make sure sync_mode is true, this will make sure you also get a base64 encoded data url back from our API.
+You can also use 768x768 or 1024x1024 as your image dimensions, the inference will be faster for this configuration compared to random dimensions but wont be as fast as 512x512.
+
+Video Tutorial: Latent Consistency - Build a Real-Time AI Image App with WebSockets, Next.js, and fal.ai by Nader Dabit
+
+
+Keeping fal API Secrets Safe
+Real-time models using WebSockets present challenges in ensuring the security of API secrets.
+
+The WebSocket connection is established directly from the browser or native mobile application, making it unsafe to embed API keys and secrets directly into the client. To address this, we have developed additional tools to enable secure authentication with our servers without introducing unnecessary intermediaries between the client and our GPU servers. Instead of using traditional API keys, we recommend utilizing short-lived JWT tokens for authentication.
+
+Easiest way to communicate with fal using websockets is through our javascript and swift clients and a server proxy.
+
+Server Side Proxy
+
+Checkout our Server Side Integration section to learn more about using a ready made proxy with your Node.js or Next.js app or implement your own.
+
+When fal.realtime.connect is invoked the fal client gets a short lived JWT token through a server proxy to authenticate with fal services. This token is refreshed automatically by the client when it is needed.
+
+Javascript
+SWIFT
+import { fal } from "@fal-ai/client";
+
+fal.config({
+  proxyUrl: "/api/fal/proxy",
+});
+
+const { send } = fal.realtime.connect("fal-ai/fast-lcm-diffusion", {
+  connectionKey: "realtime-demo",
+  throttleInterval: 128,
+  onResult(result) {
+    // display
+  },
+});
+
+Checkout the FalRealtimeSampleApp (swift) and realtime demo (js) for more details.
+
+
+Introduction to Private Serverless Models
+Private Model Deployments
+fal is a Generative Media Cloud with a model marketplace, private model deployments, and a training acceleration platform. This section covers our private model deployment system, which enables you to host your custom models and workflows on our infrastructure—the same infrastructure that powers our own models.
+
+Key Features
+A unified framework for running, deploying, and productionizing your ML models
+Access to tens of thousands of GPUs, with dynamic scale up/down policies
+Full observability into requests, responses, and latencies (including custom metrics)
+Native HTTP and WebSocket clients that can be used for both fal-provided models and your own models
+Access to fal’s Inference Engine for accelerating your models/workflows
+And much more
+Enterprise
+
+Private Models are an Enterprise feature, please email support@fal.ai to get access. Currently, this feature is in private beta. We’re successfully powering infrastructure for multiple foundational model labs (including SOTA models for Image, Video, TTS, and more).
+
+Getting Started
+Installation
+If you have access to our private model deployment offering, create a fresh virtual environment (we strongly recommend Python 3.11, but other versions are supported) and install the fal package:
+
+Terminal window
+pip install --upgrade fal
+
+Authentication
+Log in to either your personal account or any team you’re a member of. Be careful to select the proper entity, as the private beta access is probably set only for your team account and not your personal account.
+
+Terminal window
+fal auth login
+
+When prompted, select your team:
+
+If browser didn't open automatically, on your computer or mobile device navigate to [...]
+
+Confirm it shows the following code: [...]
+
+✓ Authenticated successfully, welcome!
+
+Please choose a team account to use or leave blank to use your personal account:
+[team1/team2/team3]: team1
+
+Confirm you selected the right team:
+
+Terminal window
+fal auth whoami
+
+Running Your First Model
+Every deployment in fal is a subclass of fal.App which consists of one or more @fal.endpoint decorators. For simple models or workflows with only one endpoint, it generally takes the root (/) endpoint.
+
+Here’s an example application that runs stabilityai/stable-diffusion-xl-base-1.0, an open-source text-to-image model:
+
+import fal
+from pydantic import BaseModel, Field
+from fal.toolkit import Image
+
+class Input(BaseModel):
+    prompt: str = Field(
+        description="The prompt to generate an image from",
+        examples=["A beautiful image of a cat"],
+    )
+
+class Output(BaseModel):
+    image: Image
+
+class MyApp(fal.App, keep_alive=300, name="my-demo-app"):
+    machine_type = "GPU-H100"
+    requirements = [
+        "hf-transfer==0.1.9",
+        "diffusers[torch]==0.32.2",
+        "transformers[sentencepiece]==4.51.0",
+        "accelerate==1.6.0",
+    ]
+
+    def setup(self):
+        # Enable HF Transfer for faster downloads
+        import os
+
+        os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
+
+        import torch
+        from diffusers import StableDiffusionXLPipeline
+
+        # Load any model you want, we'll use stabilityai/stable-diffusion-xl-base-1.0
+        # Huggingface models will be automatically downloaded to
+        # the persistent storage of your account
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(
+            "stabilityai/stable-diffusion-xl-base-1.0",
+            torch_dtype=torch.float16,
+            variant="fp16",
+            use_safetensors=True,
+        ).to("cuda")
+
+        # Warmup the model before the first request
+        self.warmup()
+
+    def warmup(self):
+        self.pipe("A beautiful image of a cat")
+
+    @fal.endpoint("/")
+    def run(self, request: Input) -> Output:
+        result = self.pipe(request.prompt)
+        image = Image.from_pil(result.images[0])
+        return Output(image=image)
+
+The application is divided into four parts:
+
+I/O: Defines inputs for the inference process (which in this case just takes a prompt), and the outputs (using the special fal.toolkit.Image which automatically uploads your images to fal’s CDN)
+App definition: Each app is completely separated from your local computer. You need to precisely define what dependencies your app requires to run in the cloud. In this case, it’s diffusers and other related packages.
+setup() function: Before an app starts serving requests, it will always run the user-defined setup() function. This is where you download your models, load them to GPU memory, and run warmups.
+@fal.endpoint("/"): Using the I/O definitions and the pipeline loaded in setup(), this is where you implement the inference process. In this example, it simply calls the pipeline with the user’s prompt and wraps the created PIL image with Image.from_pil() to upload it to the CDN.
+Testing Your Application
+To run and test your app locally to ensure everything works:
+
+Terminal window
+fal run example.py::MyApp
+
+Notes:
+
+During the first run or after any dependency change, we’ll build a Python environment from scratch. This process might take a couple of minutes, but as long as you don’t change the environment definition, it will reuse the same pre-built environment.
+The initial start will also download the models, but they’ll be saved to a persistent location (under /data) where they will always be available. This means the next time you run this app, the model won’t have to be downloaded again.
+This command will print two links for you to interact with your app and start streaming the logs:
+
+2025-04-07 21:37:41.001 [info     ] Access your exposed service at https://fal.run/your-user/051cf487-8f52-43dc-b793-354507637dd0
+2025-04-07 21:37:41.001 [info     ] Access the playground at https://fal.ai/dashboard/sdk/your-user/051cf487-8f52-43dc-b793-354507637dd0
+==> Running
+INFO:     Started server process [38]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+
+The first link is an HTTP proxy that goes directly to your app, allowing you to call any endpoint without authentication as long as fal run is active:
+
+Terminal window
+curl $FAL_RUN_URL -H 'content-type: application/json' -H 'accept: application/json, */*;q=0.5' -d '{"prompt":"A cat"}'
+
+Alternatively, for root endpoints, you can visit the auto-generated fal playground to interact with your model through the web UI. This option requires authentication (you need to be using your team account if you started the fal run through a team account).
+
+Deploying & Productionizing
+Once you feel the model is ready for production and you don’t want to maintain a fal run session, you can deploy the model. Deployment provides a persistent URL that either routes requests to an existing runner or starts a new one if none are available:
+
+Terminal window
+fal deploy example.py::MyApp --auth=private
+Registered a new revision for function 'my-demo-app' (revision='5b23e1b1-af88-4ab0-aebc-415b2b1e34b4').
+Playground:
+        https://fal.ai/models/fal-ai/my-demo-app/
+Endpoints:
+        https://fal.run/fal-ai/my-demo-app/
+
+Once deployed, you can go to the playground or make an authenticated HTTP call to use your model.
+
+Note:
+
+Since this is the first invocation, and you didn’t set any minimum number of runners (min_concurrency), it will start a new container and load the model. Once your request is finished, the runner will remain active for keep_alive seconds. This means your subsequent requests within the keep_alive window would be instant.
+This behavior can be configured with the fal app scale command. See the documentation for more details.
+Monitoring & Analytics
+For production deployments, you’ll want more observability over your deployed app. The Analytics page allows you to see all requests and identify error cases or slower ones along with their payloads.
+
+You can see logs attached to a specific request in the request’s detail page, or view global logs for all runners in the logs page.
+
+Advanced Configuration
+keep_alive
+The keep_alive setting enables the server to continue running even when there are no active requests. By setting this parameter, you ensure that if you hit the same application within the specified time frame, you can avoid any startup overhead.
+
+keep_alive is measured in seconds. In the example below, the application will keep running for at least 300 seconds after the last request:
+
+class MyApp(fal.App, keep_alive=300):
+   ...
+
+Min/Max Concurrency
+fal applications have a simple managed autoscaling system. You can configure the autoscaling behavior through min_concurrency and max_concurrency:
+
+class MyApp(fal.App, keep_alive=300, min_concurrency=1, max_concurrency=5):
+   ...
+
+min_concurrency: Indicates the number of replicas the system should maintain when there are no requests
+max_concurrency: Indicates the maximum number of replicas the system should have. Once this limit is reached, all subsequent requests are placed in a managed queue
+FAQ - First Asked Questions
+How can I use local files or my repository with fal?
+
+If your project is already a Python package (e.g., has __init__.py and can be imported outside of the repo), you should be able to use it as is (import it at the top level and call the relevant functions). Note that if you’re using any external dependencies in your project, you’ll also need to include them in the requirements field.
+
+I already have a Dockerfile with all my dependencies. Can I use it?
+
+Yes! You can either pass us a pre-built Docker image as the base or your Dockerfile, and we’ll build it for you. Note that your image’s Python version and your local virtual environment’s Python version need to match.
+
+How can I store my secrets?
+
+Use fal secrets set and you can read them as environment variables from your code! Docs
+
+Do you offer persistent storage? How can I use it?
+
+Anything written to /data will be available to all replicas and will be persisted. Be careful when storing many small files, as this will increase latencies (prefer large single blobs whenever possible, like model weights). Docs
+
+How can I scale my app?
+
+The platform offers extensive ways to configure scaling. The simplest approach is to increase the minimum and maximum number of runners via fal app scale $app --min-concurrency=N --max-concurrency=N. Check our docs to tune these variables and learn about other concepts (decaying keep-alive, multiplexing, concurrency buffers, etc.). Docs
+
+What is the best way to deploy from CI?
+
+You can create an ADMIN scoped key in your team account and use fal deploy with FAL_KEY set. Make sure to check our testing system as well. Docs
+
+
+Authentication
+fal supports a variety of authentication methods.
+
+fal auth login
+You can also login to fal using the fal auth login command.
+
+Terminal window
+fal auth login
+
+Team accounts
+If you are a member of a team, fal auth login will ask you if you’d like to use a team account. You can also manage teams later using the fal team command.
+
+To list teams that you are a member of, run:
+
+Terminal window
+fal team list
+┏━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Default ┃ Team             ┃ Full Name         ┃ ID                              ┃
+┡━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ *       │ myteam           │ My Team           │ github|1kbr8zjkk377xfs5tl2erl4x │
+│         │ otherteam        │ Other Team        │ github|v11vo11w2kqakm99ke00258q │
+└─────────┴──────────────────┴───────────────────┴─────────────────────────────────┘
+
+To switch to a different team, run:
+
+Terminal window
+fal team set otherteam
+
+To unset the default team and use your own personal account, run:
+
+Terminal window
+fal team unset
+
+API Keys
+Create an API key at API Keys with the ADMIN scope. If creating a key for a team, make sure to select your team on the top left corner.
+
+Managing API Keys
+When working with multiple API keys, you can use the fal profile command to save your API keys and switch between them.
+
+Functions
+In addition to fal Apps, fal also supports defining serverless functions that can be called from your code just like any other python functions, but they are executed on a remote machine.
+
+import fal
+
+
+@fal.function(machine_type="GPU", requirements=["diffusers", "torch", "transformers"])
+def generate_image(prompt: str):
+    import torch
+    from diffusers import FluxPipeline
+    from io import BytesIO
+    pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
+    pipe.enable_model_cpu_offload()
+
+    out = pipe(
+        prompt=prompt,
+        guidance_scale=0.,
+        height=768,
+        width=1360,
+        num_inference_steps=4,
+        max_sequence_length=256,
+    ).images[0]
+
+    buffer = BytesIO()
+    out.save(buffer, format="PNG")
+    image_bytes = buffer.getvalue()
+    return image_bytes
+
+image_bytes = generate_image("A cat holding a sign that says hello world")
+with open("image.png", "wb") as f:
+    f.write(image_bytes)
+
+
+
+Applications
+fal Applications are FastAPI applications that can be deployed to fal’s private serverless compute infrastructure.
+
+FastAPI and fal Applications are fully compatible with Pydantic. Any features of Pydantic used in fal endpoint arguments will also work.
+
+Pydantic features can be used for data validation in your endpoint. In the example below, you can set some of the parameters as optional, set default values, and apply other types of validation such as constraints and types.
+
+import fal
+from pydantic import BaseModel
+from fal.toolkit import Image
+
+class ImageModelInput(BaseModel):
+    seed: int | None = Field(
+        default=None,
+        description="""
+            The same seed and the same prompt given to the same version of Stable Diffusion
+            will output the same image every time.
+        """,
+        examples=[176400],
+    )
+    num_inference_steps: int = Field(
+        default=25,
+        description="""
+            Increasing the amount of steps tell the model that it should take more steps
+            to generate your final result which can increase the amount of detail in your image.
+        """,
+        gt=0,
+        le=100,
+    )
+
+class MyApp(fal.App, keep_alive=300):
+    machine_type = "GPU-A100"
+    requirements = [
+        "diffusers==0.29.0",
+        "torch==2.3.0",
+        "accelerate",
+        "transformers",
+    ]
+
+    def setup(self):
+        import torch
+        from diffusers import StableDiffusionXLPipeline, EulerDiscreteScheduler
+
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(
+            "sd-community/sdxl-flash",
+            torch_dtype=torch.float16,
+        ).to("cuda")
+        self.pipe.scheduler = EulerDiscreteScheduler.from_config(
+            self.pipe.scheduler.config,
+            timestep_spacing="trailing",
+        )
+
+    @fal.endpoint("/")
+    def generate_image(self, request: ImageModelInput) -> Image:
+        result = self.pipe(request.prompt, num_inference_steps=7, guidance_scale=3)
+        image = Image.from_pil(result.images[0])
+        return image
+
+Returning files and images from functions
+Saving images to your persistent directory is not always a convenient way to access them (you can use the File Explorer provided by the fal Web UI.) Alternatively, when dealing with image inputs and outputs, you can use fal’s file and image classes to simplify the process.
+
+import fal
+from fal.toolkit import Image
+
+MODEL_NAME = "google/ddpm-cat-256"
+
+class FalModel(
+    fal.App,
+    requirements=[
+        "diffusers[torch]",
+        "transformers",
+        "pydantic",
+    ],
+  ):
+    machine_type = "GPU"
+
+    @fal.endpoint("/")
+    def generate_image(self, input: Input) -> Output:
+        from diffusers import DDPMPipeline
+
+        pipe = DDPMPipeline.from_pretrained(MODEL_NAME, use_safetensors=True)
+        pipe = pipe.to("cuda")
+        result = pipe(num_inference_steps=25)
+        return Image.from_pil(result.images[0])
+
+Constructing an Image object on a serverless function automatically uploads it to fal’s block storage system and gives you a signed link for 2 days in which you can view or download it securely to have a copy of it as long as you need.
+
+There's more...
+
+Check out the reference for File when doing more generic file I/O, and other methods of Image to see all supported formats.
+
+
+
+Inputs and Outputs
+In order for your inputs and outputs to be nicely rendered in the playground, you need to use certain conventions that tell our frontend how to interpret the data.
+
+Files
+File URL
+Name your field with a file_url suffix and it will be rendered as a file in the playground, allowing users to upload or download the file.
+
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    file_url: str
+
+class MyOutput(BaseModel):
+    file_url: str
+
+Alternatively if that naming convention is not suitable, you can also explicitly tell our frontend to treat it as a file:
+
+from pydantic import BaseModel, Field
+
+class MyInput(BaseModel):
+    foo: str = Field(..., ui={"field": "file"})
+
+class MyOutput(BaseModel):
+    foo: str = Field(..., ui={"field": "file"})
+
+File Class
+from fal.toolkit import File, download_file
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    file: File
+
+class MyOutput(BaseModel):
+    file: File
+
+
+class MyApp(fal.App):
+    @fal.endpoint("/")
+    def predict(self, input: MyInput) -> MyOutput:
+        input_path = download_file(input.file.url)
+        ...
+        return MyOutput(file=File.from_path(output_path))
+
+Images
+Image URL
+Name your field with a image_url suffix and it will be rendered as an image in the playground, allowing users to upload or download the image.
+
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    image_url: str
+
+Alternatively if that naming convention is not suitable, you can also explicitly tell our frontend to treat it as an image:
+
+from pydantic import BaseModel, Field
+
+class MyInput(BaseModel):
+    foo: str = Field(..., ui={"field": "image"})
+
+Image Class
+from fal.toolkit import Image
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    image: Image
+
+class MyOutput(BaseModel):
+    image: Image
+
+
+class MyApp(fal.App):
+    @fal.endpoint("/")
+    def predict(self, input: MyInput) -> MyOutput:
+        input_path = download_file(input.image.url)
+        ...
+        return MyOutput(image=Image.from_path(output_path))
+
+Image Dataset
+Use image_urls suffix to render a dataset of images in the playground.
+
+from typing import List
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    image_urls: List[str]
+
+Audio
+Audio URL
+Name your field with a audio_url suffix and it will be rendered as an audio in the playground, allowing users to upload or download the audio.
+
+from typing import List
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    audio_url: str
+
+class MyOutput(BaseModel):
+    audio_url: str
+
+Alternatively if that naming convention is not suitable, you can also explicitly tell our frontend to treat it as an audio:
+
+from pydantic import BaseModel, Field
+
+class MyInput(BaseModel):
+    foo: str = Field(..., ui={"field": "audio"})
+
+Audio Class
+from fal.toolkit import Audio
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    audio: Audio
+
+class MyOutput(BaseModel):
+    audio: Audio
+
+
+class MyApp(fal.App):
+    @fal.endpoint("/")
+    def predict(self, input: MyInput) -> MyOutput:
+        input_path = download_file(input.audio.url)
+        ...
+        return MyOutput(audio=Audio.from_path(output_path))
+
+Audio Dataset
+Use audio_urls suffix to render a dataset of audios in the playground.
+
+from typing import List
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    audio_urls: List[str]
+
+Video
+Video URL
+Name your field with a video_url suffix and it will be rendered as a video in the playground, allowing users to upload or download the video.
+
+from typing import List
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    video_url: str
+
+class MyOutput(BaseModel):
+    video_url: str
+
+Alternatively if that naming convention is not suitable, you can also explicitly tell our frontend to treat it as a video:
+
+from typing import List
+from pydantic import BaseModel, Field
+
+class MyInput(BaseModel):
+    foo: str = Field(..., ui={"field": "video"})
+
+Video Class
+from fal.toolkit import Video
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    video: Video
+
+class MyOutput(BaseModel):
+    video: Video
+
+
+class MyApp(fal.App):
+    @fal.endpoint("/")
+    def predict(self, input: MyInput) -> MyOutput:
+        input_path = download_file(input.video.url)
+        ...
+        return MyOutput(video=Video.from_path(output_path))
+
+Video Dataset
+Use video_urls suffix to render a dataset of videos in the playground.
+
+from typing import List
+from pydantic import BaseModel
+
+class MyInput(BaseModel):
+    video_urls: List[str]
+
+
+Bringing your code and data
+Local python modules
+from mymodule import myfunction
+
+class MyApp(fal.App):
+    local_python_modules = ["mymodule"]
+
+    @fal.endpoint("/")
+    def predict(self, input: MyInput) -> MyOutput:
+        myfunction(input)
+        ...
+
+Git Repositories
+from fal.toolkit import clone_repository
+
+
+class MyApp(fal.App):
+    def setup(self):
+        path = clone_repository(
+            "https://github.com/myorg/myrepo",
+            commit_hash="1418c53bcfaf4efc1034207dcb39d093d5fff645",
+            # Add repository path to PYTHONPATH to allow importing modules
+            include_to_path=True,
+        )
+
+        import myproject
+        ...
+
+Data and Model weights
+See Accessing Persistent Storage for more information.
+
+from fal.toolkit import download_file
+
+
+class MyApp(fal.App):
+    def setup(self):
+        path = download_file(
+            "https://example.com/myfile.txt",
+            "myfile.txt",
+        )
+        ...
+
+
+
+Running a containerized application
+The easiest way to understand how to run a containerized application is to see an example. Let’s convert the example from the previous section into a containerized application.
+
+Container support basics
+
+Check out the running a fal app in a container example for understanding the basics of running a containerized application.
+
+import fal
+from fal.container import ContainerImage
+from fal.toolkit import Image, optimize
+
+from pydantic import BaseModel, Field
+
+dockerfile_str = """
+FROM python:3.11
+
+RUN apt-get update && apt-get install -y ffmpeg
+RUN pip install "accelerate" "transformers>=4.30.2" "diffusers>=0.26" "torch>=2.2.0"
+"""
+
+
+class Input(BaseModel):
+    prompt: str = Field(
+        description="The prompt to generate an image from.",
+        examples=[
+            "A cinematic shot of a baby racoon wearing an intricate italian priest robe.",
+        ],
+    )
+
+
+class Output(BaseModel):
+    image: Image = Field(
+        description="The generated image.",
+    )
+
+
+class FalModel(
+    fal.App,
+    image=ContainerImage.from_dockerfile_str(dockerfile_str),
+    kind="container",
+  ):
+    machine_type = "GPU"
+
+    def setup(self) -> None:
+        import torch
+        from diffusers import AutoPipelineForText2Image
+
+        # Load SDXL
+        self.pipeline = AutoPipelineForText2Image.from_pretrained(
+            "stabilityai/stable-diffusion-xl-base-1.0",
+            torch_dtype=torch.float16,
+            variant="fp16",
+        )
+        self.pipeline.to("cuda")
+
+        # Apply fal's spatial optimizer to the pipeline.
+        self.pipeline.unet = optimize(self.pipeline.unet)
+        self.pipeline.vae = optimize(self.pipeline.vae)
+
+        # Warm up the model.
+        self.pipeline(
+            prompt="a cat",
+            num_inference_steps=30,
+        )
+
+    @fal.endpoint("/")
+    def text_to_image(self, input: Input) -> Output:
+        result = self.pipeline(
+            prompt=input.prompt,
+            num_inference_steps=30,
+        )
+        [image] = result.images
+        return Output(image=Image.from_pil(image))
+
+Voila! 🎉 The highlighted changes are the only modifications you need to make; the rest remains your familiar fal application.
+
+Dockerfile Keywords
+
+Please check our Dockerfile best practices for more information on how to optimize your Dockerfile.
+
+Private docker registries
+To use private docker registries, you need to provide registry credentials like so:
+
+Dockerhub
+class FalModel(
+    fal.App,
+    kind="container",
+    image=ContainerImage.from_dockerfile_str(
+        "FROM myuser/image:tag",
+        registries={
+            "https://index.docker.io/v1/": {
+                "username": "myuser",
+                "password": "$DOCKERHUB_TOKEN",  # use `fal secrets set` first to create this secret
+            },
+        },
+    ),
+)
+    ...
+
+Google Artifact Registry
+class FalModel(
+    fal.App,
+    kind="container",
+    image=ContainerImage.from_dockerfile_str(
+        "FROM europe-west1-docker.pkg.dev/myuser/image:tag",
+        registries={
+            "https://index.docker.io/v1/": {
+                "username": "oauth2accesstoken",
+                "password": "$GCP_TOKEN",  # use `fal secrets set` first to create this secret
+            },
+        },
+    ),
+)
+    ...
+
+Amazon Elastic Container Registry
+class FalModel(
+    fal.App,
+    kind="container",
+    image=ContainerImage.from_dockerfile_str(
+        "FROM 123456789012.dkr.ecr.us-east-1.amazonaws.com/image:tag",
+        registries={
+            "https://index.docker.io/v1/": {
+                "username": "AWS",
+                # Use `aws ecr get-login-password --region us-east-1` to get a token. Note that they only last
+                # 12 hours so it is better to just create them dynamically here instead of creating one and
+                # setting it as a `fal secret`.
+                # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecr/get-login-password.html
+                "password": aws_token,
+            },
+        },
+    ),
+)
+    ...
+
+
+
+
+Real-time endpoints & WebSockets
+For applications deployed on fal runtime; in addition to regular HTTP endpoints, developers might choose to implement auxiliary interfaces on top of raw WebSockets or fal’s (stateless) real-time application framework.
+
+Under a fal.App, for any endpoint that deal with real-time connectivity, @fal.realtime() decorator can be used instead of @fal.endpoint to automatically make the interface compatible with fal’s real-time clients. The functions do not provide any session state, and are meant to be used for reducing the overall latency (with fal’s binary protocol) and eliminating fixed connection establishing overheads.
+
+For power users who want to build stateful applications with their own real-time protocol, a @fal.endpoint can be initialized with is_websocket=True flag and the underlying function will receive the raw WebSocket connection and can choose to use it however it wants.
+
+import fal
+from pydantic import BaseModel
+
+class Input(BaseModel):
+    prompt: str = Field()
+
+
+class Output(BaseModel):
+    output: str = Field()
+
+
+class RealtimeApp(fal.App):
+    @fal.endpoint("/")
+    def generate(self, input: Input) -> Output:
+        return Output(output=input.prompt)
+
+    @fal.endpoint("/ws", is_websocket=True)
+    async def generate_ws(self, websocket: WebSocket) -> None:
+        await websocket.accept()
+        for _ in range(3):
+            await websocket.send_json({"message": "Hello world!"})
+        await websocket.close()
+
+    @fal.realtime("/realtime")
+    def generate_rt(self, input: Input) -> Output:
+        return Output(output=input.prompt)
+
+
+
+Setting secrets
+For setting sensitive information (such as API keys or database credentials) to be accessed within your fal functions you can use the fal secrets CLI interface.
+
+$ fal secrets set MY_API_TOKEN=token MY_IDENTITY_KEY=identity
+
+Any secret that is set will be exposed to all functions running from your user, and can be accessible as if they are regular environment variables.
+
+import os
+import fal
+
+@fal.function()
+def print_secrets():
+    print(os.getenv("MY_API_TOKEN"))
+    print(os.getenv("MY_IDENTITY_KEY"))
+
+if __name__ == "__main__":
+    print_secrets()
+
+You can also list the secrets you have through the CLI, but the values will be hidden for security reasons.
+
+$ fal secrets list
+┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Secret Name             ┃ Created At                 ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ MY_API_TOKEN            │ 2023-09-05 15:17:39.279347 │
+│ MY_IDENTITY_KEY         │ 2023-09-05 15:17:41.444478 │
+└─────────────────────────┴────────────────────────────┘
+
+To omit a secret from being present in new runs, you can simply delete it through the CLI:
+
+$ fal secrets unset MY_API_TOKEN
+
+
+
+Supported Machines
+The fal runtime lets you specify the size of the machine that your fal apps and functions run on.
+
+Machine Types
+Value	Description
+XS	0.25 CPU cores, 256MB RAM (default)
+S	0.50 CPU cores, 1GB RAM
+M	2 CPU cores, 8GB RAM
+L	4 CPU cores, 32GB RAM
+GPU-A6000	4 CPU cores, 18GB RAM, 1 GPU core (48GB VRAM)
+GPU-A100	10 CPU cores, 60GB RAM, 1 GPU core (40GB VRAM)
+GPU-H100	12 CPU cores, 112GB RAM, 1 GPU core (80GB VRAM)
+GPU-H200	12 CPU cores, 112GB RAM, 1 GPU core (141GB VRAM)
+GPU-B200	8 CPU cores, 64GB RAM, 1 GPU core (192GB VRAM)
+For GPU machines, you can also specify the number of GPUs you want to use with the num_gpus option, see examples below.
+
+Examples
+Applications
+class MyApp(fal.App):
+  machine_type = "GPU-H100"
+  num_gpus = 4
+  ...
+
+Functions
+For example:
+
+@fal.function(machine_type="GPU")
+def my_function():
+  ...
+
+@fal.function(machine_type="L")
+def my_other_function():
+  ...
+
+By default, the machine_type is set to XS.
+
+You can also switch the machine type of an existing fal function by using the on method.
+
+my_function_S = my_function.on(machine_type="S")
+
+In the above example, my_function_S is a new fal function that has the same contents as my_function, but it will run on a machine type S.
+
+Both functions can be called:
+
+my_function() # executed on machine type `GPU`
+my_function_S() # same as my_function but executed on machine type `S`
+
+my_function is executed on machine type GPU. And my_function_S, which has the same logic as my_function, is now executed on machine type S.
+
+
+Testing
+Manual Testing With Ephemeral Deployments
+Utilize Ephemeral Deployments to test your application through normal REST API calls.
+
+Playground
+Go to the autogenerated playground for your ephemeral deployment to test your application.
+
+REST API
+Use the REST API with your ephemeral deployment URL to test your application.
+
+Python
+Applications
+import fal
+from pydantic import BaseModel
+from fal.toolkit import Image
+
+class ImageModelInput(BaseModel):
+    seed: int | None = Field(
+        default=None,
+        description="""
+            The same seed and the same prompt given to the same version of Stable Diffusion
+            will output the same image every time.
+        """,
+        examples=[176400],
+    )
+    num_inference_steps: int = Field(
+        default=25,
+        description="""
+            Increasing the amount of steps tell the model that it should take more steps
+            to generate your final result which can increase the amount of detail in your image.
+        """,
+        gt=0,
+        le=100,
+    )
+
+class MyApp(fal.App(keep_alive=300)):
+    machine_type = "GPU-A100"
+    requirements = [
+        "diffusers==0.29.0",
+        "torch==2.3.0",
+        "accelerate",
+        "transformers",
+    ]
+
+    def setup(self):
+        import torch
+        from diffusers import StableDiffusionXLPipeline, DPMSolverSinglestepScheduler
+
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(
+            "sd-community/sdxl-flash",
+            torch_dtype=torch.float16,
+        ).to("cuda")
+        self.pipe.scheduler = DPMSolverSinglestepScheduler.from_config(
+            self.pipe.scheduler.config,
+            timestep_spacing="trailing",
+        )
+
+    @fal.endpoint("/")
+    def generate_image(self, request: ImageModelInput) -> Image:
+        result = self.pipe(request.prompt, num_inference_steps=7, guidance_scale=3)
+        image = Image.from_pil(result.images[0])
+        return image
+
+
+def test_myapp():
+    with fal.app.AppClient(MyApp) as client:
+        client.generate_image(prompt="A cat holding a sign that says hello world")
+
+Functions
+Fal functions can be called directly in your python code and they will automatically run on a remote machine.
+
+import fal
+
+
+@fal.function(machine_type="GPU", requirements=["diffusers", "torch", "transformers"])
+def generate_image(prompt: str):
+    import torch
+    from diffusers import FluxPipeline
+    from io import BytesIO
+    pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
+    pipe.enable_model_cpu_offload()
+
+    out = pipe(
+        prompt=prompt,
+        guidance_scale=0.,
+        height=768,
+        width=1360,
+        num_inference_steps=4,
+        max_sequence_length=256,
+    ).images[0]
+
+    buffer = BytesIO()
+    out.save(buffer, format="PNG")
+    image_bytes = buffer.getvalue()
+    return image_bytes
+
+
+def test_myfunc():
+    image_bytes = generate_image("A cat holding a sign that says hello world")
+    assert image_bytes
+
+
+Deployment
+Ephemeral Deployments
+Ephemeral deployments are a feature of fal that allows you to deploy your application to a temporary URL. This is useful for testing and development.
+
+Terminal window
+fal run MyApp::path/to/myapp.py
+...
+==> Setting up runtime
+2025-03-17 12:30:52.292 [info     ] Starting runner 70413bcd-5bb6-40fd-b711-b8b7ef3fc8a0
+2025-03-17 12:30:55.367 [info     ] Opening connection to runner
+2025-03-17 12:30:55.858 [info     ] Access your exposed service at https://fal.run/myuser/2577e7b3-88d9-49f8-a1e6-4c226e19922f
+2025-03-17 12:30:55.859 [info     ] Access the playground at https://fal.ai/dashboard/sdk/myuser/2577e7b3-88d9-49f8-a1e6-4c226e19922f
+==> Running
+INFO:     Started server process [38]
+INFO:     Waiting for application startup.
+INFO:     Started server process [38]
+INFO:     Waiting for application startup.
+...
+
+When running fal run, you will see two URLs that look like this:
+
+https://fal.run/myuser/2577e7b3-88d9-49f8-a1e6-4c226e19922f - This is the URL for a REST API of your application, that you can use to make requests to.
+https://fal.ai/dashboard/sdk/myuser/2577e7b3-88d9-49f8-a1e6-4c226e19922f - This is the URL of the friendly WebUI playground that we generate for your application.
+Once you kill the fal run process in your terminal, the ephemeral deployment will be destroyed.
+
+Deploying
+To permanently deploy your application or update/redeploy existing one, you can use the fal deploy command.
+
+Terminal window
+fal deploy
+
+Deployment Authentication Mode
+Your app could be deployed in one of three authentication modes:
+
+private: default, your app is visible only to you and/or your team.
+shared: everyone can see and use your app, the user pays for it. This is how all of the apps in our Model Gallery work.
+public: everyone can see and use your app, the app owner (you) is paying for it.
+Use fal deploy’s --auth flag or fal.App’s app_auth to specify your app’s authentication mode, e.g.
+
+class MyApp(fal.App):
+    auth_mode = "shared"
+
+Terminal window
+fal deploy --auth shared
+
+To change the mode just redeploy the app.
+
+Listing Deployed Applications
+To list all deployed applications, you can use the fal apps list command.
+
+Terminal window
+fal apps list
+
+Deleting an app
+To delete an app, you can use the fal apps delete command.
+
+Terminal window
+fal apps delete myapp
+
+
+Monitoring
+Dashboard
+fal provides a dashboard for you to monitor your fal applications requests and logs. Go to the fal dashboard to view your applications.
+
+Logs
+You can view the logs for your fal applications on their respective pages or in the logs dashboard.
+
+Webhooks
+To view the webhooks that were triggered for your fal applications, go to the webhooks dashboard.
+
+
+Scaling
+Machine Types
+You can scale your app to a different machine type by using the fal apps scale command. For more info on available machine types, see the resources.
+
+Change Machine Type For New Runners
+Changing the machine type for new runners will not affect existing runners, but any new runners will use the new machine type. If you want to change the machine type for existing runners, you can manually kill the existing runners using fal runners kill and they will be replaced with new ones using the new machine type.
+
+Terminal window
+fal apps scale myapp --machine-type GPU-A100
+
+Allow Using Multiple Machine Types
+Sometimes you may want to allow your app to use multiple machine types. For example, to have a larger pool of available machines.
+
+Terminal window
+fal apps scale myapp --machine-type GPU-A100-40G --machine-type GPU-A100-80G
+
+Min Concurrency
+Minimal concurrency is the minimum number of runners that will be kept alive for your app at any time. If your app takes a while to start up and you are expecting a burst of requests, you may want to set this to a higher number.
+
+Terminal window
+fal apps scale myapp --min-concurrency 2
+
+Max Concurrency
+Max concurrency is the maximum total number of runners that we are allowed to spin up for your app when there are more requests than available runners.
+
+Terminal window
+fal apps scale myapp --max-concurrency 10
+
+Keep Alive
+Keep alive is the amount of seconds a runner (beyond min concurrency) will be kept alive for your app. Depending on your traffic pattern, you might want to set this to a higher number, especially if your app is slow to start up.
+
+Terminal window
+fal apps scale myapp --keep-alive 300
+
+Max Multiplexing
+Maximum multiplexing is the maximum number of requests that can be handled by a single runner at any time. This is useful if your app instance is capable of handling multiple requests at the same time, which typically depends on the machine type and amount of resources that your app needs to process a request.
+
+Terminal window
+fal apps scale myapp --max-multiplexing 10
+
+
+Introduction to Private Serverless Models
+As mentioned earlier, each fal app runs in an isolated environment that gets voided right after each request (unless keep_alive is set). But for certain use cases, it may be important to persist certain results after the run is over. In such scenarios, you can use the /data volume, which is mounted on each machine and is shared across all your app is running at any point in time linked to your fal account.
+
+import fal
+from pathlib import Path
+
+DATA_DIR = Path("/data/mnist")
+
+```py {2,11,21,26}
+class FalModel(
+    fal.App,
+    requirements=["torch>=2.0.0", "torchvision"],
+
+  ):
+    machine_type = "GPU"
+
+
+    @fal.endpoint("/")
+    def text_to_image(self, input: Input) -> Output:
+    import torch
+    from torchvision import datasets
+
+    already_present = DATA_DIR.exists()
+    if already_present:
+        print("Test data is already downloaded, skipping download!")
+
+    test_data = datasets.FashionMNIST(
+        root=DATA_DIR,
+        train=False,
+        download=not already_present,
+    )
+    ...
+
+When you invoke this app for the first time, you will notice that Torch downloads the test dataset. However, subsequent invocations - even those not covered by the invocation’s keep_alive - will skip the download and proceed directly to your logic.
+
+Implementation note
+
+For HF-related libraries, fal ensures all downloaded models are persisted to avoid re-downloads when running ML inference workloads. No need to customize the output path for transformers or diffusers.
+
+
+Optimizing Routing Behavior
+When there are multiple available replicas of the same application, there isn’t a defined behavior for picking which one to use for a particular request with the assumption that all replicas would behave identically for the given set of inputs.
+
+This might not be true for applications which hold state and might include an in-memory cache for certain sets of parameters. For example, if you are serving an application that can run any diffusion model but only can keep 3 distinct models in memory, you want to minimize the number of cache misses (because loading that model from scratch incurs a significant performance penalty) depending on a user provided input.
+
+This is where the semantically-aware routing hints come into play. Instead of treating each replica equally, applications can provide hints for specialization and allow fal’s router to select the appropriate replica for a specific request. For this logic to work as efficiently, the user needs to provide a X-Fal-Runner-Hint header with a semantically identifying string hint and the application should implement a provide_hints() method that returns a list of hints. If there is a match in any of the replicas, fal’s router will send the request to that replica. However, if there is no match, it will fall back to the standard routing algorithm.
+
+from typing import Any
+
+import fal
+from fal.toolkit import Image
+from pydantic import BaseModel
+
+class Input(BaseModel):
+    model: str = Field()
+    prompt: str = Field()
+
+
+class Output(BaseModel):
+    image: Image = Field()
+
+
+class AnyModelRunner(fal.App):
+    def setup(self) -> None:
+        self.models = {}
+
+    def provide_hints(self) -> list[str]:
+        # Choose to specialize on already loaded models; at first this will be empty
+        # so we'll be picked for any request, but as slowly the cache builds up, the
+        # replica will be more preferable compared to others.
+        return self.models.keys()
+
+    def load_model(self, name: str) -> Any:
+        from diffusers import DiffusionPipeline
+
+        if name in self.models:
+            return self.models[name]
+
+        pipeline = DiffusionPipeline.from_pretrained(name)
+        pipeline.to("cuda")
+
+        self.models[name] = pipeline
+        return pipeline
+
+    @fal.endpoint("/")
+    def run_model(self, input: Input) -> Output:
+        model = self.load_model(input.model)
+        result = model(input.prompt)
+        return Output(image=Image.from_pil(result.images[0]))
+
+
+Runtime Model Optimizations
+fal’s inference engine bindings takes a torch module and applies all relevant dynamic compilation and quantization techniques to make it faster out of the box without leaking any of the complexity to the user.
+
+This API is currently experimental, and might be subject to change in the future.
+
+Example usage:
+
+import fal
+from fal.toolkit import Image, optimize
+from pydantic import BaseModel, Field
+
+
+class Input(BaseModel):
+    prompt: str = Field(
+        description="The prompt to generate an image from.",
+        examples=[
+            "A cinematic shot of a baby racoon wearing an intricate italian priest robe.",
+        ],
+    )
+
+
+class Output(BaseModel):
+    image: Image = Field(
+        description="The generated image.",
+    )
+
+
+class FalModel(fal.App):
+    machine_type = "GPU"
+    requirements = [
+        "accelerate",
+        "transformers>=4.30.2",
+        "diffusers>=0.26",
+        "torch>=2.2.0",
+    ]
+
+    def setup(self) -> None:
+        import torch
+        from diffusers import AutoPipelineForText2Image
+
+        # Load SDXL
+        self.pipeline = AutoPipelineForText2Image.from_pretrained(
+            "stabilityai/stable-diffusion-xl-base-1.0",
+            torch_dtype=torch.float16,
+            variant="fp16",
+        )
+        self.pipeline.to("cuda")
+
+        # Apply fal's spatial optimizer to the pipeline.
+        self.pipeline.unet = optimize(self.pipeline.unet)
+        self.pipeline.vae = optimize(self.pipeline.vae)
+
+        # Warm up the model.
+        self.pipeline(
+            prompt="a cat",
+            num_inference_steps=30,
+        )
+
+    @fal.endpoint("/")
+    def text_to_image(self, input: Input) -> Output:
+        result = self.pipeline(
+            prompt=input.prompt,
+            num_inference_steps=30,
+        )
+        [image] = result.images
+        return Output(image=Image.from_pil(image))
+
+
+
+Cache-Efficient Dockerfile Guidelines with docker buildx (or buildKit)
+Under the hood, we use buildkit (or docker buildx) to build docker images. This allows us to take advantage of advanced caching mechanisms to improve build times and reduce resource consumption. In this guide, we’ll provide some guidelines for creating cache-efficient Dockerfiles.
+
+Introduction
+Building a cache-efficient Dockerfile is crucial for improving the build time and reducing resource consumption. Docker Buildx and BuildKit provide advanced features that enhance caching mechanisms. This document provides guidelines for creating such Dockerfiles.
+
+Note
+
+Ensure you have Docker Buildx and BuildKit enabled in your Docker environment if you want to test your containers locally. Otherwise, you don’t need to worry about it. fal platform takes care of it for you when you deploy your application using container support.
+
+Check out the Docker buildx documentation for more information.
+
+General Guidelines
+Note
+
+Please also refer to the Dockerfile best practices for detailed information on Dockerfile best practices.
+
+1. Minimize Layers
+Each RUN, COPY, or ADD instruction creates a new layer. Minimize the number of layers by combining commands.
+
+Bad Example:
+
+RUN apt-get update
+RUN apt-get install -y curl
+
+Good Example:
+
+RUN apt-get update && apt-get install -y curl
+
+2. Leverage Layer Caching
+Order instructions from least to most frequently changing to maximize layer caching.
+
+Example:
+
+# Install dependencies (changes less frequently)
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt
+
+# Copy application code (changes more frequently)
+COPY . /app
+
+3. Use --mount=type=cache
+Utilize BuildKit’s --mount=type=cache to cache directories across builds.
+
+Example:
+
+1.3-labs
+FROM python:3.9
+
+# Use BuildKit cache for pip
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip
+
+COPY requirements.txt /app/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
+
+COPY . /app
+
+4. Multi-Stage Builds
+Use multi-stage builds to reduce the final image size by copying only the necessary artifacts from intermediate stages.
+
+Example:
+
+1.3
+FROM python:3.9 AS builder
+WORKDIR /app
+COPY . .
+RUN pip install --upgrade pip \
+ && pip install -r requirements.txt
+
+FROM python:3.9-slim
+COPY --from=builder /app /app
+WORKDIR /app
+ENTRYPOINT ["python", "app.py"]
+
+5. Clean Up After Installations
+Remove unnecessary files and caches after installing packages to keep the image size small.
+
+Example:
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+ && rm -rf /var/lib/apt/lists/*
+
+6. Use .dockerignore
+Specify files and directories to ignore during the build process to avoid unnecessary files in the build context.
+
+Caution
+
+As of now, fal does not support .dockerignore files. Since we don’t allow using COPY and ADD from the host filesystem, you can ignore this step. However, we plan to add support for this in the near future. Stay tuned!
+
+See below for more information.
+
+Example:
+
+__pycache__
+*.pyc
+*.pyo
+
+Example Dockerfile
+Here is an example of a cache-efficient Dockerfile using the principles outlined above:
+
+1.3
+FROM python:3.9 AS base
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt ./
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip \
+ && pip install -r requirements.txt
+
+# Copy source files
+COPY . .
+
+# Build the application
+RUN python setup.py build
+
+# Production image
+FROM python:3.9-slim
+COPY --from=base /app /app
+WORKDIR /app
+ENTRYPOINT ["python", "app.py"]
+
+fal Platform Specific Gotchas
+When deploying your application on the fal platform, you don’t need to worry about enabling Docker Buildx or BuildKit. We take care of it for you. However, you can follow the guidelines mentioned above to create efficient Dockerfiles that will help speed up the build process and reduce resource consumption.
+
+1. Interacting with the local filesystem
+COPY and ADD (from local filesystem) are not supported as of now to copy files into the container from the host. Instead you can use fal’s fal.toolkit to upload files and refer them in the container using links.
+
+Note
+
+If you are curious about the differences between COPY and ADD, check out the following link.
+
+json_url = File.from_path("my-file.json", repository="cdn").url
+
+dockerfile_str = f"""
+FROM python:3.11-slim
+RUN apt-get update && apt-get install -y curl
+RUN curl '{json_url}' > my-file.json
+"""
+
+or you can use ADD to directly download the file from the URL:
+
+json_url = File.from_path("requirements.txt", repository="cdn").url
+
+dockerfile_str = f"""
+FROM python:3.11-slim
+ADD {json_url} /app/requirements.txt
+WORKDIR /app
+RUN pip install -r requirements.txt
+"""
+
+Conclusion
+By following these guidelines, you can create Dockerfiles that build efficiently and take full advantage of Docker Buildx and BuildKit’s caching capabilities. This will lead to faster build times and reduced resource usage.
+
+For more detailed information, refer to the Docker documentation.
+
+
+Migrating from Replicate
+This guide will help you transition from using Replicate’s tools, specifically their Cog tool, to fal’s platform. Cog is a tool used to package machine learning models in Docker containers, which simplifies the deployment process.
+
+Step 1: Generate the Dockerfile with Cog
+First, ensure you have Cog installed. If not, follow the instructions on the Cog GitHub page.
+
+Navigate to your project directory and run:
+
+Terminal window
+cog debug > Dockerfile
+
+This command will generate a Dockerfile in the root of your project.
+
+Step 2: Adapt the Dockerfile for fal
+With your Dockerfile generated, you might need to make a few modifications to ensure compatibility with fal.
+
+First, we need to extract Python dependencies and install them in the Docker image. We can do this by copying the dependencies from the Cog file to the Docker image. Here’s an example of how you can do this:
+
+Requirements
+
+The following command assumes you have yq installed. If not, you can install it using pip install yq. Or follow the instructions on the yq GitHub page.
+
+You might also need to install jq if you don’t have it installed. e.g. You can install it using sudo apt-get install jq if you are using a Debian-based system. Alternatively, check out the jq GitHub page.
+
+Terminal window
+yq -e '.build.python_packages | map(select(. != null and . != "")) | map("'"'"'" + . + "'"'"'") | join(" ")' cog.yaml
+
+This will give you a list of Python packages that you can install in your Docker image. Using RUN pip install ... in your Dockerfile.
+
+e.g.
+
+‘torch’ ‘torchvision’ ‘torchaudio’ ‘torchsde’ ‘einops’ ‘transformers>=4.25.1’ …
+
+Alternatively, you can write the contents of the python_packages to a requirements.txt file and install them in the Dockerfile. See the example in the containerized application page.
+
+Here’s a basic example of what your Dockerfile might look like:
+
+The example Cog project is https://github.com/fofr/cog-comfyui.
+
+1.4
+FROM python:3.10.6 as deps
+COPY .cog/tmp/build4143857248/cog-0.0.1.dev-py3-none-any.whl /tmp/cog-0.0.1.dev-py3-none-any.whl
+RUN --mount=type=cache,target=/root/.cache/pip pip install -t /dep /tmp/cog-0.0.1.dev-py3-none-any.whl
+COPY .cog/tmp/build4143857248/requirements.txt /tmp/requirements.txt
+ RUN --mount=type=cache,target=/root/.cache/pip pip install -t /dep -r /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install -t /dep 'torch' 'torchvision' 'torchaudio' 'torchsde' 'einops' 'transformers>=4.25.1' 'safetensors>=0.3.0' 'aiohttp' 'accelerate' 'pyyaml' 'Pillow' 'scipy' 'tqdm' 'psutil' 'spandrel' 'kornia>=0.7.1' 'websocket-client==1.6.3' 'diffusers>=0.25.0' 'albumentations==1.4.3' 'cmake' 'imageio' 'joblib' 'matplotlib' 'pilgram' 'scikit-learn' 'rembg' 'numba' 'pandas' 'numexpr' 'insightface' 'onnx' 'segment-anything' 'piexif' 'ultralytics!=8.0.177' 'timm' 'importlib_metadata' 'opencv-python-headless>=4.0.1.24' 'filelock' 'numpy' 'einops' 'pyyaml' 'scikit-image' 'python-dateutil' 'mediapipe' 'svglib' 'fvcore' 'yapf' 'omegaconf' 'ftfy' 'addict' 'yacs' 'trimesh[easy]' 'librosa' 'color-matcher' 'facexlib'
+FROM nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/bin
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked set -eux; \
+apt-get update -qq && \
+apt-get install -qqy --no-install-recommends curl; \
+rm -rf /var/lib/apt/lists/*; \
+TINI_VERSION=v0.19.0; \
+TINI_ARCH="$(dpkg --print-architecture)"; \
+curl -sSL -o /sbin/tini "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TINI_ARCH}"; \
+chmod +x /sbin/tini
+ENTRYPOINT ["/sbin/tini", "--"]
+ENV PATH="/root/.pyenv/shims:/root/.pyenv/bin:$PATH"
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked apt-get update -qq && apt-get install -qqy --no-install-recommends \
+  make \
+  build-essential \
+  libssl-dev \
+  zlib1g-dev \
+  libbz2-dev \
+  libreadline-dev \
+  libsqlite3-dev \
+  wget \
+  curl \
+  llvm \
+  libncurses5-dev \
+  libncursesw5-dev \
+  xz-utils \
+  tk-dev \
+  libffi-dev \
+  liblzma-dev \
+  git \
+  ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+RUN curl -s -S -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash && \
+  git clone https://github.com/momo-lab/pyenv-install-latest.git "$(pyenv root)"/plugins/pyenv-install-latest && \
+  pyenv install-latest "3.10.6" && \
+  pyenv global $(pyenv install-latest --print "3.10.6") && \
+  pip install "wheel<1"
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked apt-get update -qq && apt-get install -qqy ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=bind,from=deps,source=/dep,target=/dep \
+    cp -rf /dep/* $(pyenv prefix)/lib/python*/site-packages; \
+    cp -rf /dep/bin/* $(pyenv prefix)/bin; \
+    pyenv rehash
+RUN curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/download/v0.8.1/pget_linux_x86_64" && chmod +x /usr/local/bin/pget
+RUN pip install onnxruntime-gpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+ # fal platform will inject the necessary mechanisms to run your application.
+WORKDIR /src
+EXPOSE 5000
+CMD ["python", "-m", "cog.server.http"]
+COPY . /src
+
+And that’s it! 🎉
+
+Ensure all dependencies and paths match your project’s requirements.
+
+Step 3: Deploy on fal
+fal supports deploying Docker-based applications easily. Follow these steps to deploy your Docker container on fal:
+
+Create an account on fal: If you haven’t already, sign up at fal.
+
+Create a new project: In your favorite directory, create a new project and move the Dockerfile into it. Create a new Python file with the following content:
+
+import fal
+
+from fal.container import ContainerImage
+from pathlib import Path
+
+PWD = Path(__file__).resolve().parent
+
+
+class MyApp(
+  fal.App,
+  kind="container",
+  image=ContainerImage.from_dockerfile(f"{PWD}/Dockerfile"),
+):
+  def setup(self):
+    ...
+
+  @fal.endpoint("/")
+  def predict(self, input: Input) -> Output:
+    # Rest is your imagination.
+
+Converting your app/server
+
+On a serious note, you need to do a little bit of conversion to run your application. But don’t get intimidated, it’s just a few lines of code. The structure is of cog server and fal apps are similar, so you can easily adapt your application to run on fal.
+
+You can see details documentation on how to use fal SDK here.
+
+More information on how to deploy a containerized application can be found here.
+
+Step 4: Test Your Deployment
+Once deployed, ensure that everything is working as expected by accessing your application through the URL provided by fal. Monitor logs and performance to make sure the migration was successful.
+
+Troubleshooting
+If you encounter any issues during the migration, check the following:
+
+Dependencies: Ensure all required dependencies are listed in your requirements.txt or equivalent file.
+Environment Variables and Build Arguments: Double-check that all necessary environment variables and build arguments are set correctly in your Dockerfile.
+Logs: Use the logging features in fal to diagnose any build or runtime issues.
+For further assistance, refer to the fal Documentation or reach out to the fal support team.
+
+Conclusion
+Migrating from Replicate to fal can be smooth with proper preparation and testing. This guide provides a straightforward path, but each project may have unique requirements. Adapt these steps as needed to fit your specific use case.
+
+For additional help, join our community on Discord or contact our support team.
+
+
+Install
+Install latest official version
+Terminal window
+pip install fal
+
+Install upstream version
+Terminal window
+pip install git+https://github.com/fal-ai/fal#subdirectory=projects/fal
+
+Install development version from a git revision
+Terminal window
+pip install git+https://github.com/fal-ai/fal@75fe22f19cf61c7b6488d919d9a8c4bcb3433b42#subdirectory=projects/fal
+
+Install development version from a git tag
+Terminal window
+pip install git+https://github.com/fal-ai/fal@fal_v1.10.0#subdirectory=projects/fal
+
+Install development version from a git branch
+Terminal window
+pip install git+https://github.com/fal-ai/fal@main#subdirectory=projects/fal
+
+
+fal auth
+Terminal window
+fal auth [-h] [--debug] [--pdb] [--cprofile] command ...
+
+Authenticate with fal.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Commands:
+  command
+    login     Log in a user.
+    logout    Log out the currently logged-in user.
+    whoami    Show the currently authenticated user.
+
+Login
+Terminal window
+Usage: fal auth login [-h] [--debug] [--pdb] [--cprofile]
+
+Log in a user.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Logout
+Terminal window
+Usage: fal auth logout [-h] [--debug] [--pdb] [--cprofile]
+
+Log out the currently logged-in user.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Whoami
+Terminal window
+Usage: fal auth whoami [-h] [--debug] [--pdb] [--cprofile]
+
+Show the currently authenticated user.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+
+fal apps list
+Terminal window
+Usage: fal apps list [-h] [--debug] [--pdb] [--cprofile]
+
+List applications.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal apps list-rev
+Terminal window
+Usage: fal apps list-rev [-h] [--debug] [--pdb] [--cprofile]
+
+List application revisions.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal apps set-rev
+Terminal window
+Usage: fal apps set-rev [-h] [--debug] [--pdb] [--cprofile]
+                        [--auth {public,private,shared}]
+                        app_name app_rev
+
+Set application to a particular revision.
+
+Positional Arguments:
+  app_name              Application name.
+  app_rev               Application revision.
+
+Options:
+  -h, --help            show this help message and exit
+  --auth {public,private,shared}
+                        Application authentication mode.
+
+Debug:
+  --debug               Show verbose errors.
+  --pdb                 Start pdb on error.
+  --cprofile            Show cProfile report.
+
+
+fal apps scale
+Terminal window
+Usage: fal apps scale [-h] [--debug] [--pdb] [--cprofile]
+                      [--keep-alive KEEP_ALIVE]
+                      [--max-multiplexing MAX_MULTIPLEXING]
+                      [--max-concurrency MAX_CONCURRENCY]
+                      [--min-concurrency MIN_CONCURRENCY]
+                      [--request-timeout REQUEST_TIMEOUT]
+                      [--startup-timeout STARTUP_TIMEOUT]
+                      [--machine-types MACHINE_TYPES [MACHINE_TYPES ...]]
+                      [--regions REGIONS [REGIONS ...]]
+                      app_name
+
+Scale application.
+
+Positional Arguments:
+  app_name              Application name.
+
+Options:
+  -h, --help            show this help message and exit
+  --keep-alive KEEP_ALIVE
+                        Keep alive (seconds).
+  --max-multiplexing MAX_MULTIPLEXING
+                        Maximum multiplexing
+  --max-concurrency MAX_CONCURRENCY
+                        Maximum concurrency.
+  --min-concurrency MIN_CONCURRENCY
+                        Minimum concurrency
+  --request-timeout REQUEST_TIMEOUT
+                        Request timeout (seconds).
+  --startup-timeout STARTUP_TIMEOUT
+                        Startup timeout (seconds).
+  --machine-types MACHINE_TYPES [MACHINE_TYPES ...]
+                        Machine types (pass several items to set multiple).
+  --regions REGIONS [REGIONS ...]
+                        Valid regions (pass several items to set multiple).
+
+Debug:
+  --debug               Show verbose errors.
+  --pdb                 Start pdb on error.
+  --cprofile            Show cProfile report.
+
+
+fal apps runners
+Terminal window
+Usage: fal apps runners [-h] [--debug] [--pdb] [--cprofile] app_name
+
+List application runners.
+
+Positional Arguments:
+  app_name    Application name.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal apps delete
+Terminal window
+Usage: fal apps delete [-h] [--debug] [--pdb] [--cprofile] app_name
+
+Delete application.
+
+Positional Arguments:
+  app_name    Application name.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal apps delete-rev
+Terminal window
+Usage: fal apps delete-rev [-h] [--debug] [--pdb] [--cprofile] app_rev
+
+Delete application revision.
+
+Positional Arguments:
+  app_rev     Application revision.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+
+fal deploy
+Terminal window
+Usage: fal deploy [-h] [--debug] [--pdb] [--cprofile] [--app-name APP_NAME]
+                  [--auth AUTH] [--strategy {recreate,rolling}] [--no-scale]
+                  [app_ref]
+
+Deploy a fal application. If no app reference is provided, the command will look for a pyproject.toml file with a  section and deploy the application specified with the provided app name.
+
+Positional Arguments:
+  app_ref               Application reference. Either a file path or a file path and a function name separated by '::'. If no reference is provided, the command will look for a pyproject.toml file with a  section and deploy the application specified with the provided app name.
+                        File path example: path/to/myfile.py::MyApp
+                        App name example: my-app
+
+Options:
+  -h, --help            show this help message and exit
+  --app-name APP_NAME   Application name to deploy with.
+  --auth AUTH           Application authentication mode (private, public).
+  --strategy {recreate,rolling}
+                        Deployment strategy.
+  --no-scale            Use min_concurrency/max_concurrency/max_multiplexing from previous deployment of application with this name, if exists. Otherwise will use the values from the application code.
+
+Debug:
+  --debug               Show verbose errors.
+  --pdb                 Start pdb on error.
+  --cprofile            Show cProfile report.
+
+Examples:
+  fal deploy
+  fal deploy path/to/myfile.py
+  fal deploy path/to/myfile.py::MyApp
+  fal deploy path/to/myfile.py::MyApp --app-name myapp --auth public
+  fal deploy my-app
+
+
+fal run
+Terminal window
+Usage: fal run [-h] [--debug] [--pdb] [--cprofile] func_ref
+
+Run fal function.
+
+Positional Arguments:
+  func_ref    Function reference.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Examples:
+  fal run path/to/myfile.py::myfunc
+
+
+fal keys
+Terminal window
+Usage: fal keys [-h] [--debug] [--pdb] [--cprofile] command ...
+
+Manage fal keys.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Commands:
+  command
+    create    Create a key.
+    list      List keys.
+    revoke    Revoke key.
+
+Create
+Terminal window
+Usage: fal keys create [-h] [--debug] [--pdb] [--cprofile] --scope {ADMIN,API}
+                       [--desc DESC]
+
+Create a key.
+
+Options:
+  -h, --help           show this help message and exit
+  --scope {ADMIN,API}  The privilege scope of the key.
+  --desc DESC          Key description (e.g. "My Test Key")
+
+Debug:
+  --debug              Show verbose errors.
+  --pdb                Start pdb on error.
+  --cprofile           Show cProfile report.
+
+List
+Terminal window
+Usage: fal keys list [-h] [--debug] [--pdb] [--cprofile]
+
+List keys.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Revoke
+Terminal window
+Usage: fal keys revoke [-h] [--debug] [--pdb] [--cprofile] key_id
+
+Revoke key.
+
+Positional Arguments:
+  key_id      Key ID.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+Profiles
+Managing Profiles
+The fal CLI allows you to manage multiple profiles, making it easy to switch between different fal accounts. This is particularly useful if you have multiple environments or projects.
+
+Adding a New Profile
+To add a new profile, set it as the default and then add the key:
+
+Terminal window
+❯ fal profile set example
+Default profile set to example.
+No key set for profile. Use fal profile key to set a key.
+
+❯ fal profile key
+Enter the key: invalid
+Invalid key. The key must be in the format key:value.
+Enter the key: 112f05b4-6ee8-4d06-bdb1-7ba38789ef8e:954285993fa8e651dac37a03ea2efbc9
+Key set for profile example.
+
+Note: The key used in the example above is no longer valid. 😉
+
+Listing Profiles
+To list all available profiles, use the fal profile list command:
+
+Terminal window
+❯ fal profile list
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Default ┃ Profile ┃ Settings ┃
+┡━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│         │ me      │ key      │
+│         │ comfy   │ key      │
+│ *       │ example │ key      │
+└─────────┴─────────┴──────────┘
+
+Setting a Default Profile
+To set a default profile, use the fal profile set command followed by the profile name:
+
+Terminal window
+❯ fal profile set comfy
+Default profile set to comfy.
+
+❯ fal profile list
+┏━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓
+┃ Default ┃ Profile ┃ Settings ┃
+┡━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩
+│         │ me      │ key      │
+│ *       │ comfy   │ key      │
+│         │ example │ key      │
+└─────────┴─────────┴──────────┘
+
+After setting the default profile, you can directly access the account information without specifying the profile name.
+
+Terminal window
+❯ fal app list
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┓
+┃ Name   ┃ Revision           ┃ Auth   ┃ Min Concurrency ┃ Max Concurrency ┃ Max Multiplexing ┃ Keep Alive ┃ Request Timeout ┃ Startup Timeout ┃ Machine Type ┃ Runners ┃ Regions ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━┩
+│ my-app │ 11111111-2222-333… │ shared │ 0               │ 10              │ 1                │ 300        │ 3600            │ 600             │ ........     │ 0       │         │
+└────────┴────────────────────┴────────┴─────────────────┴─────────────────┴──────────────────┴────────────┴─────────────────┴─────────────────┴──────────────┴─────────┴─────────┘
+
+Deleting a Profile
+To delete a profile, use the fal profile delete command followed by the profile name:
+
+Terminal window
+❯ fal profile delete example
+Profile example deleted.
+
+
+fal secrets
+Terminal window
+Usage: fal secrets [-h] [--debug] [--pdb] [--cprofile] command ...
+
+Manage fal secrets.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Commands:
+  command
+    set       Set a secret.
+    list      List secrets.
+    unset     Unset a secret.
+
+Set
+Terminal window
+Usage: fal secrets set [-h] [--debug] [--pdb] [--cprofile]
+                       NAME=VALUE [NAME=VALUE ...]
+
+Set a secret.
+
+Positional Arguments:
+  NAME=VALUE  Secret NAME=VALUE pairs.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Examples:
+  fal secrets set HF_TOKEN=hf_***
+
+List
+Terminal window
+Usage: fal secrets list [-h] [--debug] [--pdb] [--cprofile]
+
+List secrets.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Unset
+Terminal window
+Usage: fal secrets unset [-h] [--debug] [--pdb] [--cprofile] NAME
+
+Unset a secret.
+
+Positional Arguments:
+  NAME        Secret's name.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal doctor
+Terminal window
+Usage: fal doctor [-h] [--debug] [--pdb] [--cprofile]
+
+fal version and misc environment information.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+fal create
+Terminal window
+Usage: fal create [-h] [--debug] [--pdb] [--cprofile] project_type
+
+Create fal applications.
+
+Positional Arguments:
+  project_type  Type of project to create.
+
+Options:
+  -h, --help    show this help message and exit
+
+Debug:
+  --debug       Show verbose errors.
+  --pdb         Start pdb on error.
+  --cprofile    Show cProfile report.
+
+
+fal runners
+Terminal window
+Usage: fal runners [-h] [--debug] [--pdb] [--cprofile] command ...
+
+Manage fal runners.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+Commands:
+  command
+    kill      Kill a runner.
+
+List
+Terminal window
+Usage: fal runners list [-h] [--debug] [--pdb] [--cprofile] [--team TEAM]
+
+List runners.
+
+Options:
+  -h, --help   show this help message and exit
+  --team TEAM  The team to use.
+
+Debug:
+  --debug      Show verbose errors.
+  --pdb        Start pdb on error.
+  --cprofile   Show cProfile report.
+
+Kill
+Terminal window
+Usage: fal runners kill [-h] [--debug] [--pdb] [--cprofile] id
+
+Kill a runner.
+
+Positional Arguments:
+  id          Runner ID.
+
+Options:
+  -h, --help  show this help message and exit
+
+Debug:
+  --debug     Show verbose errors.
+  --pdb       Start pdb on error.
+  --cprofile  Show cProfile report.
+
+
+Frequently Asked Questions
+When logging-in with GitHub I am asked for a one-time code that I never receive in my email
+Logging with GitHub means that the one-time code It’s being sent to the primary email in your GitHub account.
+
+You may have created your GitHub account with an email you no longer monitor, so check their documentation on how to find out which one it is set as and change it if appropriate.
+
+What is the retention policy for the files generated by fal.ai?
+The files generated by fal.ai are guaranteed to be available for at least 7 days. After that, they may be deleted at any time. We recommend that you download and store on your own storage any files that you want to keep for longer.
+
+Can I use the generated files for commercial purposes?
+Each model has its own license. Most of the endpoints available at fal are available for commercial use. Check for the label on each model page:
+
+Commercial use : Commercial use is allowed. Even when the underlying model is not open-source, if it’s marked with this badge it means that fal has the necessary rights to provide the service for commercial use.
+Research only : This model is available for research purposes only. You can use the API to generate images for research purposes, but you cannot use them for commercial purposes.
+What is the Partner API?
+Partner API : Partner APIs are hosted by our partners. Therefore, we cannot offer percentage discount on them and cannot guarantee their availability.
+Is there a rate limit?
+The rate limit for the API is 10 concurrent tasks per user, across all endpoints. For enterprise customers, we can scale this up, contact us if you need more rate limits.
+
+Note that we reserve the right to prioritize API requests over requests made through our Playground UI.
+
+Do you charge for failed requests?
+Failures originated from our side, such as server errors or any HTTP status 5xx, are not charged. However, if the failure is due to an error in the request, such as an invalid input, which can result in HTTP status 422, the request will be charged.
+
+Do my credits expire?
+Yes, the credits you purchase expire in 365 days. Free credits or credits from coupons expire in 90 days.
+
+Can I switch to an invoice-based payment?
+Yes, we offer invoice-based payments for customers with higher volumes. Please contact us with information about your expected load.
+
+Do I pay for cold starts?
+No, although cold start for our main endpoints is very rare, you will not be charged for them when they happen.
+
+Can I deploy my own models?
+If you want access to deploy your a model for your private use to fal you need to contact us with information about the expected load for said model.
+
+Do you offer discounts?
+Yes, we offer discounts for customers with higher volumes. Please contact us with information about your expected load.
+
+
+Frequently Asked Questions
+When logging-in with GitHub I am asked for a one-time code that I never receive in my email
+Logging with GitHub means that the one-time code It’s being sent to the primary email in your GitHub account.
+
+You may have created your GitHub account with an email you no longer monitor, so check their documentation on how to find out which one it is set as and change it if appropriate.
+
+What is the retention policy for the files generated by fal.ai?
+The files generated by fal.ai are guaranteed to be available for at least 7 days. After that, they may be deleted at any time. We recommend that you download and store on your own storage any files that you want to keep for longer.
+
+Can I use the generated files for commercial purposes?
+Each model has its own license. Most of the endpoints available at fal are available for commercial use. Check for the label on each model page:
+
+Commercial use : Commercial use is allowed. Even when the underlying model is not open-source, if it’s marked with this badge it means that fal has the necessary rights to provide the service for commercial use.
+Research only : This model is available for research purposes only. You can use the API to generate images for research purposes, but you cannot use them for commercial purposes.
+What is the Partner API?
+Partner API : Partner APIs are hosted by our partners. Therefore, we cannot offer percentage discount on them and cannot guarantee their availability.
+Is there a rate limit?
+The rate limit for the API is 10 concurrent tasks per user, across all endpoints. For enterprise customers, we can scale this up, contact us if you need more rate limits.
+
+Note that we reserve the right to prioritize API requests over requests made through our Playground UI.
+
+Do you charge for failed requests?
+Failures originated from our side, such as server errors or any HTTP status 5xx, are not charged. However, if the failure is due to an error in the request, such as an invalid input, which can result in HTTP status 422, the request will be charged.
+
+Do my credits expire?
+Yes, the credits you purchase expire in 365 days. Free credits or credits from coupons expire in 90 days.
+
+Can I switch to an invoice-based payment?
+Yes, we offer invoice-based payments for customers with higher volumes. Please contact us with information about your expected load.
+
+Do I pay for cold starts?
+No, although cold start for our main endpoints is very rare, you will not be charged for them when they happen.
+
+Can I deploy my own models?
+If you want access to deploy your a model for your private use to fal you need to contact us with information about the expected load for said model.
+
+Do you offer discounts?
+Yes, we offer discounts for customers with higher volumes. Please contact us with information about your expected load.
+
+
