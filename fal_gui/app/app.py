@@ -236,7 +236,7 @@ def api_generate():
     except requests.exceptions.HTTPError as e:
         app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
         app.logger.error(f"HTTPError Response Text: {e.response.text}")
-        error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
+        error_details = e.response.json() if e.response.headers.get('Content-Type', '').startswith('application/json') else e.response.text
         return jsonify({"error": f"FAL API Error: {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Network error: {str(e)}"}), 500
@@ -508,7 +508,7 @@ def api_image_to_image():
     except requests.exceptions.HTTPError as e:
         app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
         app.logger.error(f"HTTPError Response Text: {e.response.text}")
-        error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
+        error_details = e.response.json() if e.response.headers.get('Content-Type', '').startswith('application/json') else e.response.text
         return jsonify({"error": f"FAL API Error (Img2Img): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Network error (Img2Img): {str(e)}"}), 500
@@ -524,7 +524,7 @@ def api_inpaint():
     except requests.exceptions.HTTPError as e:
         app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
         app.logger.error(f"HTTPError Response Text: {e.response.text}")
-        error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
+        error_details = e.response.json() if e.response.headers.get('Content-Type', '').startswith('application/json') else e.response.text
         return jsonify({"error": f"FAL API Error (Inpaint): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Network error (Inpaint): {str(e)}"}), 500
@@ -540,7 +540,7 @@ def api_upscale():
     except requests.exceptions.HTTPError as e:
         app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
         app.logger.error(f"HTTPError Response Text: {e.response.text}")
-        error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
+        error_details = e.response.json() if e.response.headers.get('Content-Type', '').startswith('application/json') else e.response.text
         return jsonify({"error": f"FAL API Error (Upscale): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Network error (Upscale): {str(e)}"}), 500
@@ -556,7 +556,7 @@ def api_remove_background():
     except requests.exceptions.HTTPError as e:
         app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
         app.logger.error(f"HTTPError Response Text: {e.response.text}")
-        error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
+        error_details = e.response.json() if e.response.headers.get('Content-Type', '').startswith('application/json') else e.response.text
         return jsonify({"error": f"FAL API Error (BG Remove): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Network error (BG Remove): {str(e)}"}), 500
