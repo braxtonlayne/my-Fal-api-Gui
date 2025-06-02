@@ -13,23 +13,23 @@ MODEL_URLS = {
     "fal-ai/fast-sdxl": "https://fal.ai/api/fast-sdxl/run",
     "fal-ai/sdxl": "https://fal.ai/api/sdxl/run",
     "fal-ai/fast-turbo-diffusion": "https://fal.ai/api/fast-turbo-diffusion/run",
-    "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run",
+    "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run", 
 }
 
 IMG2IMG_MODEL_URLS = {
-    "fal-ai/sdxl-i2i-placeholder": "https://fal.ai/api/sdxl-img2img-placeholder/run",
-    "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run",
+    "fal-ai/sdxl-i2i-placeholder": "https://fal.ai/api/sdxl-img2img-placeholder/run", 
+    "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run", 
 }
 
 INPAINT_MODEL_URLS = {
-    "fal-ai/sdxl-inpainting-placeholder": "https://fal.ai/api/sdxl-inpainting-placeholder/run",
+    "fal-ai/sdxl-inpainting-placeholder": "https://fal.ai/api/sdxl-inpainting-placeholder/run", 
     "fal-ai/stable-diffusion-v1-5-inpainting": "https://fal.ai/api/stable-diffusion-v1-5-inpainting/run",
 }
 
 UPSCALE_MODEL_URLS = {
-    "fal-ai/esrgan-placeholder": "https://fal.ai/api/esrgan/run",
-    "fal-ai/real-esrgan-animevideo": "https://fal.ai/api/real-esrgan-animevideo/run",
-    "fal-ai/swinir": "https://fal.ai/api/swinir/run",
+    "fal-ai/esrgan-placeholder": "https://fal.ai/api/esrgan/run", 
+    "fal-ai/real-esrgan-animevideo": "https://fal.ai/api/real-esrgan-animevideo/run", 
+    "fal-ai/swinir": "https://fal.ai/api/swinir/run", 
 }
 
 BG_REMOVE_MODEL_URLS = {
@@ -75,20 +75,20 @@ def api_generate():
 
         prompt = data.get('prompt')
         model_id = data.get('model_id', "fal-ai/fast-sdxl")
-
+        
         if not prompt:
             return jsonify({"error": "Prompt is required"}), 400
 
         selected_model_url = MODEL_URLS.get(model_id)
         if not selected_model_url:
             return jsonify({"error": f"Invalid model selected: {model_id}"}), 400
-
+        
         fal_payload = {k: v for k, v in data.items() if k not in ['model_id'] and v is not None} # Filter out nulls for FAL
 
         app.logger.info(f"Sending payload to {selected_model_url}: {fal_payload}")
         headers = {"Authorization": f"Key {fal_api_key}", "Content-Type": "application/json"}
         response = requests.post(selected_model_url, json=fal_payload, headers=headers)
-        response.raise_for_status()
+        response.raise_for_status() 
         response_data = response.json()
         app.logger.debug(f"Initial FAL response: {response_data}")
 
@@ -96,7 +96,7 @@ def api_generate():
             image_url = response_data['output']['images'][0].get('url')
             if image_url:
                 return jsonify({"image_url": image_url, "params": initial_request_params})
-
+        
         status_url = response_data.get('status_url')
         if not status_url:
             return jsonify({"error": "Failed to get status_url or direct result from FAL API", "details": response_data}), 500
@@ -124,7 +124,7 @@ def api_generate():
             else:
                 if i > MAX_RETRIES // 2: return jsonify({"error": f"Unknown FAL status: {status}", "details": poll_data}), 500
                 time.sleep(RETRY_INTERVAL)
-
+        
         return jsonify({"error": "Polling timed out waiting for FAL response"}), 500
 
     except requests.exceptions.HTTPError as e:
@@ -145,11 +145,11 @@ def process_common_image_request(request_type_name, model_dict):
     if 'image' not in request.files and request_type_name not in ["inpaint"]: # Inpaint has original_image
          if 'original_image' not in request.files and request_type_name == "inpaint":
             return jsonify({"error": f"No image file provided for {request_type_name}"}), 400
-
+    
     image_file_key = 'image'
     if request_type_name == "inpaint" and 'original_image' in request.files:
         image_file_key = 'original_image'
-
+    
     image_file = request.files.get(image_file_key)
 
     if not image_file or image_file.filename == '':
@@ -164,7 +164,7 @@ def process_common_image_request(request_type_name, model_dict):
         selected_model_url = MODEL_URLS.get(model_id) or IMG2IMG_MODEL_URLS.get(model_id)
         if not selected_model_url:
             return jsonify({"error": f"Invalid {request_type_name} model: {model_id}"}), 400
-
+    
     try:
         image_data_url = f"data:{image_file.mimetype};base64,{base64.b64encode(image_file.read()).decode('utf-8')}"
     except Exception as e:
@@ -175,7 +175,7 @@ def process_common_image_request(request_type_name, model_dict):
     if request_type_name == "inpaint":
         fal_payload["mask_url"] = request.form.get('mask_image_data_url')
         if not fal_payload["mask_url"]: return jsonify({"error": "Mask is required for inpaint."}),400
-
+    
     # Add other relevant parameters from form to fal_payload, converting types as needed
     for key in ['prompt', 'strength', 'seed', 'guidance_scale', 'num_inference_steps']:
         if key in request.form:
@@ -186,7 +186,7 @@ def process_common_image_request(request_type_name, model_dict):
                 else: fal_payload[key] = value
             except ValueError:
                 return jsonify({"error": f"Invalid value for {key}"}), 400
-
+    
     # Model-specific payload adjustments (example for IP-Adapter)
     if model_id == "fal-ai/ip-adapter-faceid-plus-lora" and request_type_name == "image_to_image":
         fal_payload.pop("image_url", None)
@@ -195,7 +195,7 @@ def process_common_image_request(request_type_name, model_dict):
     log_payload = {k: v[:100]+"..." if isinstance(v, str) and k.endswith("_url") and len(v)>100 else v for k,v in fal_payload.items()}
     app.logger.info(f"Sending {request_type_name} payload to {selected_model_url}: {log_payload}")
     headers = {"Authorization": f"Key {fal_api_key}", "Content-Type": "application/json", "Accept": "application/json"}
-
+    
     response = requests.post(selected_model_url, json=fal_payload, headers=headers)
     response.raise_for_status()
     response_data = response.json()
@@ -247,7 +247,7 @@ def process_common_image_request(request_type_name, model_dict):
         else:
             if i > MAX_RETRIES // 2: return jsonify({"error": f"Unknown FAL status for {request_type_name}: {status}", "details": poll_data}), 500
             time.sleep(RETRY_INTERVAL)
-
+            
     return jsonify({"error": f"Polling timed out for {request_type_name}"}), 500
 
 
