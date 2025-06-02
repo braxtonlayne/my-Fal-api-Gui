@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyButton = document.getElementById('saveApiKey');
     const clearApiKeyButton = document.getElementById('clearApiKey');
     const apiKeyStatusArea = document.getElementById('apiKeyStatus'); // Dedicated status area for API key
-
+    
     const promptInput = document.getElementById('promptInput');
     const negativePromptInput = document.getElementById('negativePromptInput');
     const seedInput = document.getElementById('seedInput');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const guidanceScaleInput = document.getElementById('guidanceScaleInput');
     const numStepsInput = document.getElementById('numStepsInput');
     const modelSelection = document.getElementById('modelSelection');
-
+    
     // Mode selection
     const modeRadios = document.querySelectorAll('input[name="mode"]');
     const txt2imgControls = document.getElementById('txt2imgControls');
@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const inpaintControls = document.getElementById('inpaintControls');
     const upscaleControls = document.getElementById('upscaleControls');
     const bgRemoveControls = document.getElementById('bgRemoveControls');
+
+    // Loading Overlay elements
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingMessage = document.getElementById('loadingMessage');
 
     // Image-to-Image specific controls
     const img2imgModelSelection = document.getElementById('img2imgModelSelection');
@@ -50,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const upscaleImageUpload = document.getElementById('upscaleImageUpload');
     const upscaleImagePreview = document.getElementById('upscaleImagePreview');
     const generateUpscaleButton = document.getElementById('generateUpscaleButton');
-    let originalUpscaleImageForUpload = null;
-
+    let originalUpscaleImageForUpload = null; 
+    
     // Background Removal specific controls
     const bgRemoveModelSelection = document.getElementById('bgRemoveModelSelection');
     const bgRemoveImageUpload = document.getElementById('bgRemoveImageUpload');
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDrawing = false;
     let lastX, lastY;
     let currentBrushSize = brushSizeInput ? parseInt(brushSizeInput.value) : 30;
-    let originalInpaintImageForUpload = null;
+    let originalInpaintImageForUpload = null; 
 
     if (imageCanvas) imageCtx = imageCanvas.getContext('2d');
     if (maskCanvas) maskCtx = maskCanvas.getContext('2d');
@@ -72,9 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const generateButton = document.getElementById('generateButton'); // txt2img generate button
     const generalStatusArea = document.getElementById('statusArea');
-    const imageResultArea = document.getElementById('imageResultArea');
-
-    let currentGenerationParams = {};
+    const imageResultArea = document.getElementById('imageResultArea'); 
+    
+    let currentGenerationParams = {}; 
     let currentMode = 'txt2img'; // To track the current active mode for history
 
     // History Feature
@@ -131,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 message = 'Background Removal mode selected. Upload image.';
             }
             generalStatusArea.textContent = message;
-            if(imageResultArea) imageResultArea.innerHTML = '';
+            if(imageResultArea) imageResultArea.innerHTML = ''; 
             generalStatusArea.style.color = 'inherit';
         });
     });
@@ -152,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    
     // Input Image Preview Logic (for Upscaling)
     if (upscaleImageUpload) {
         upscaleImageUpload.addEventListener('change', function(event) {
@@ -206,14 +210,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         imageCanvas.height = 512;
                         maskCanvas.width = 512;
                         maskCanvas.height = 512;
-
+                        
                         // Scale and draw image to fit canvas
                         const hRatio = imageCanvas.width / img.width;
                         const vRatio = imageCanvas.height / img.height;
                         const ratio = Math.min(hRatio, vRatio);
                         const centerShift_x = (imageCanvas.width - img.width * ratio) / 2;
                         const centerShift_y = (imageCanvas.height - img.height * ratio) / 2;
-
+                        
                         imageCtx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
                         imageCtx.drawImage(img, 0, 0, img.width, img.height,
                                            centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
@@ -232,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(brushSizeValueSpan) brushSizeValueSpan.textContent = `${currentBrushSize}px`;
         });
     }
-
+    
     function drawOnMask(e) {
         if (!isDrawing || !maskCtx) return;
         maskCtx.strokeStyle = 'black'; // Mask is drawn in black on a transparent/semi-transparent canvas
@@ -370,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    
     // Remove any API key from localStorage from previous versions
     localStorage.removeItem('falApiKey');
 
@@ -378,10 +382,36 @@ document.addEventListener('DOMContentLoaded', () => {
     checkApiKeyStatus();
     loadHistory(); // Load history on page startup
 
+
+    // --- Global Loading State Management ---
+    function setLoadingState(isLoading, message = 'Loading...') {
+        if (!loadingOverlay || !loadingMessage) return;
+
+        const allGenerateButtons = [
+            generateButton, generateImg2ImgButton, generateInpaintButton, 
+            generateUpscaleButton, generateBgRemoveButton
+        ];
+
+        if (isLoading) {
+            loadingMessage.textContent = message;
+            loadingOverlay.style.display = 'flex';
+            allGenerateButtons.forEach(btn => { if(btn) btn.disabled = true; });
+            if(generalStatusArea) generalStatusArea.textContent = message; // Also update status area
+            if(generalStatusArea) generalStatusArea.style.color = 'blue';
+        } else {
+            loadingOverlay.style.display = 'none';
+            allGenerateButtons.forEach(btn => { if(btn) btn.disabled = false; });
+            // Don't clear generalStatusArea here if it might contain a success/error message
+            // If generalStatusArea was purely for loading, you could clear it:
+            // if(generalStatusArea && generalStatusArea.textContent === message) generalStatusArea.textContent = ''; 
+        }
+    }
+
+
     // Helper function to create and display a result item
     function displayResultItem(imageUrl, params, mode, isFromHistory = false) {
         if (!imageResultArea) return;
-        imageResultArea.innerHTML = '';
+        imageResultArea.innerHTML = ''; 
 
         const item = document.createElement('div');
         item.className = 'result-item';
@@ -406,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paramsDiv.className = 'result-params';
         paramsDiv.style.fontSize = '0.9em';
         paramsDiv.style.marginBottom = '10px';
-
+        
         let paramsHTML = `<p><strong>Mode:</strong> <span class="param-mode">${mode}</span></p>`;
         if (params.model_id) paramsHTML += `<p><strong>Model:</strong> <span class="param-model">${params.model_id}</span></p>`;
         if (params.prompt) paramsHTML += `<p><strong>Prompt:</strong> <span class="param-prompt">${params.prompt}</span></p>`;
@@ -457,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const response = await fetch(imageUrl);
                     const blob = await response.blob();
                     const file = new File([blob], "generated_image_for_i2i.png", { type: blob.type });
-
+                    
                     // Switch to Img2Img mode
                     document.querySelector('input[name="mode"][value="img2img"]').checked = true;
                     txt2imgControls.style.display = 'none';
@@ -466,12 +496,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     bgRemoveControls.style.display = 'none';
                     img2imgControls.style.display = 'block';
                     generalStatusArea.textContent = 'Image-to-Image mode selected. Image loaded from previous result.';
-
+                    
                     // Set the file to the input
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     inputImageUpload.files = dataTransfer.files;
-
+                    
                     // Trigger change event for preview
                     const changeEvent = new Event('change', { bubbles: true });
                     inputImageUpload.dispatchEvent(changeEvent);
@@ -486,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             actionsDiv.appendChild(useForImg2ImgBtn);
         }
-
+        
         // "Send to Inpaint" Button
         if (mode !== "Inpainting" && (mode === "Text-to-Image" || mode === "Image-to-Image" || mode === "Background Removal" || mode === "Upscaling")) {
             const sendToInpaintBtn = document.createElement('button');
@@ -496,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const response = await fetch(imageUrl);
                     const blob = await response.blob();
                     const file = new File([blob], "generated_image_for_inpaint.png", { type: blob.type });
-
+                    
                     document.querySelector('input[name="mode"][value="inpaint"]').checked = true;
                     txt2imgControls.style.display = 'none';
                     img2imgControls.style.display = 'none';
@@ -504,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     bgRemoveControls.style.display = 'none';
                     inpaintControls.style.display = 'block';
                     generalStatusArea.textContent = 'Inpainting mode selected. Image loaded from previous result.';
-
+                    
                     originalInpaintImageForUpload = file; // Store the file for inpainting.js logic
                     const changeEvent = new Event('change', { bubbles: true }); // For inpaintImageUpload to pick it up
                     inpaintImageUpload.files = new DataTransfer().files; // Clear if any
@@ -534,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const response = await fetch(imageUrl);
                     const blob = await response.blob();
                     const file = new File([blob], "generated_image_for_upscale.png", { type: blob.type });
-
+                    
                     document.querySelector('input[name="mode"][value="upscale"]').checked = true;
                     txt2imgControls.style.display = 'none';
                     img2imgControls.style.display = 'none';
@@ -542,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     bgRemoveControls.style.display = 'none';
                     upscaleControls.style.display = 'block';
                     generalStatusArea.textContent = 'Upscaling mode selected. Image loaded from previous result.';
-
+                    
                     originalUpscaleImageForUpload = file; // Store the file for upscaling.js logic
                     const changeEvent = new Event('change', { bubbles: true });
                     upscaleImageUpload.files = new DataTransfer().files; // Clear if any
@@ -569,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addToHistory(imageUrl, params, mode);
         }
     }
-
+    
     // --- History Functions ---
     function loadHistory() {
         const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
@@ -620,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
             historyItem.style.cursor = 'pointer';
 
             const img = document.createElement('img');
-            img.src = entry.imageUrl;
+            img.src = entry.imageUrl; 
             img.alt = `History: ${entry.params.prompt || entry.mode}`;
             img.style.width = '100%';
             img.style.height = '100px';
@@ -628,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.style.display = 'block';
             img.onclick = () => displayResultItem(entry.imageUrl, entry.params, entry.mode, true); // Display in main area, mark as from history
             historyItem.appendChild(img);
-
+            
             const actionsContainer = document.createElement('div');
             actionsContainer.style.position = 'absolute';
             actionsContainer.style.top = '2px';
@@ -661,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 reloadParamsFromHistory(entry);
             };
             actionsContainer.appendChild(reloadBtn);
-
+            
             historyItem.appendChild(actionsContainer);
             historyGallery.appendChild(historyItem);
         });
@@ -684,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    
     function reloadParamsFromHistory(historyEntry) {
         currentMode = historyEntry.mode;
         // Activate the correct radio button for the mode
@@ -692,7 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modeRadio) {
             modeRadio.checked = true;
             // Manually trigger change to update UI sections visibility
-            modeRadio.dispatchEvent(new Event('change', {bubbles: true}));
+            modeRadio.dispatchEvent(new Event('change', {bubbles: true})); 
         }
 
         const params = historyEntry.params;
@@ -703,13 +733,13 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (currentMode === 'inpaint' && inpaintPromptInput) inpaintPromptInput.value = params.prompt;
         }
         if (params.negative_prompt && negativePromptInput && currentMode === 'txt2img') negativePromptInput.value = params.negative_prompt;
-
+        
         if (params.seed !== null && params.seed !== undefined) {
             if (currentMode === 'txt2img' && seedInput) seedInput.value = params.seed;
             else if (currentMode === 'img2img' && img2imgSeedInput) img2imgSeedInput.value = params.seed;
             else if (currentMode === 'inpaint' && inpaintSeedInput) inpaintSeedInput.value = params.seed;
         }
-
+        
         if (params.model_id) {
             if (currentMode === 'txt2img' && modelSelection) modelSelection.value = params.model_id;
             else if (currentMode === 'img2img' && img2imgModelSelection) img2imgModelSelection.value = params.model_id;
@@ -751,25 +781,22 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (!currentGenerationParams.prompt) {
-                generalStatusArea.textContent = 'Please enter a prompt.';
+                generalStatusArea.textContent = 'Error: Please enter a prompt.';
                 generalStatusArea.style.color = 'red';
                 return;
             }
-
+            
             const apiKeyStatusResponse = await fetch('/api/get_api_key_status');
             const apiKeyStatusData = await apiKeyStatusResponse.json();
             if (!apiKeyStatusData.is_set) {
-                generalStatusArea.textContent = 'API Key is not set. Please save your API Key first.';
+                generalStatusArea.textContent = 'Error: API Key is not set. Please save your API Key first.';
                 generalStatusArea.style.color = 'red';
                 apiKeyInput.focus();
                 return;
             }
-
-            generalStatusArea.textContent = 'Generating image, please wait...';
-            generalStatusArea.style.color = 'blue';
-            if(imageResultArea) imageResultArea.innerHTML = ''; // Clear previous results
-            generateButton.disabled = true;
-            generateButton.textContent = 'Generating...';
+            
+            setLoadingState(true, 'Generating Text-to-Image, please wait...');
+            if(imageResultArea) imageResultArea.innerHTML = ''; 
 
             try {
                 const response = await fetch('/api/generate', {
@@ -784,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     generalStatusArea.textContent = 'Text-to-Image generated successfully!';
                     generalStatusArea.style.color = 'green';
                 } else {
-                    let errorMessage = `Error: ${result.error || response.statusText}`;
+                    let errorMessage = `Error: ${result.error || response.statusText || 'Unknown error'}`;
                     if (result.details) errorMessage += ` - Details: ${typeof result.details === 'object' ? JSON.stringify(result.details) : result.details}`;
                     generalStatusArea.textContent = errorMessage;
                     generalStatusArea.style.color = 'red';
@@ -792,11 +819,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Fetch error during text-to-image generation:', error);
-                generalStatusArea.textContent = `Network error: ${error.message}. Check console.`;
+                generalStatusArea.textContent = `Error: Network error during text-to-image generation. ${error.message}. Check console.`;
                 generalStatusArea.style.color = 'red';
             } finally {
-                generateButton.disabled = false;
-                generateButton.textContent = 'Generate Text-to-Image';
+                setLoadingState(false);
+                // Restore button text which might have been changed by setLoadingState or manually
+                if(generateButton) generateButton.textContent = 'Generate Text-to-Image';
             }
         });
     }
@@ -811,12 +839,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 seed: img2imgSeedInput.value.trim() ? parseInt(img2imgSeedInput.value.trim()) : null,
                 guidance_scale: img2imgGuidanceScaleInput.value.trim() ? parseFloat(img2imgGuidanceScaleInput.value.trim()) : null,
                 num_inference_steps: img2imgNumStepsInput.value.trim() ? parseInt(img2imgNumStepsInput.value.trim()) : null,
-                // Note: The actual image file is handled separately by FormData
             };
             const imageFile = inputImageUpload.files[0];
 
             if (!imageFile) {
-                generalStatusArea.textContent = 'Please upload an image for Image-to-Image generation.';
+                generalStatusArea.textContent = 'Error: Please upload an image for Image-to-Image generation.';
                 generalStatusArea.style.color = 'red';
                 inputImageUpload.focus();
                 return;
@@ -828,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
              if (!currentGenerationParams.strength) {
-                generalStatusArea.textContent = 'Please enter Image Strength.';
+                generalStatusArea.textContent = 'Error: Please enter Image Strength.';
                 generalStatusArea.style.color = 'red';
                 imageStrengthInput.focus();
                 return;
@@ -837,17 +864,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const apiKeyStatusResponse = await fetch('/api/get_api_key_status');
             const apiKeyStatusData = await apiKeyStatusResponse.json();
             if (!apiKeyStatusData.is_set) {
-                generalStatusArea.textContent = 'API Key is not set. Please save your API Key first.';
+                generalStatusArea.textContent = 'Error: API Key is not set. Please save your API Key first.';
                 generalStatusArea.style.color = 'red';
                 apiKeyInput.focus();
                 return;
             }
-
-            generalStatusArea.textContent = 'Generating Image-to-Image, please wait...';
-            generalStatusArea.style.color = 'blue';
+            
+            setLoadingState(true, 'Generating Image-to-Image, please wait...');
             if(imageResultArea) imageResultArea.innerHTML = '';
-            generateImg2ImgButton.disabled = true;
-            generateImg2ImgButton.textContent = 'Generating...';
 
             const formData = new FormData();
             formData.append('image', imageFile);
@@ -861,7 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch('/api/image_to_image', {
                     method: 'POST',
-                    body: formData,
+                    body: formData, 
                 });
                 const result = await response.json();
 
@@ -870,7 +894,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     generalStatusArea.textContent = 'Image-to-Image generated successfully!';
                     generalStatusArea.style.color = 'green';
                 } else {
-                    let errorMessage = `Error: ${result.error || response.statusText}`;
+                    let errorMessage = `Error: ${result.error || response.statusText || 'Unknown error'}`;
                     if (result.details) errorMessage += ` - Details: ${typeof result.details === 'object' ? JSON.stringify(result.details) : result.details}`;
                     generalStatusArea.textContent = errorMessage;
                     generalStatusArea.style.color = 'red';
@@ -878,11 +902,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Fetch error during Image-to-Image generation:', error);
-                generalStatusArea.textContent = `Network error: ${error.message}. Check console.`;
+                generalStatusArea.textContent = `Error: Network error during Image-to-Image. ${error.message}. Check console.`;
                 generalStatusArea.style.color = 'red';
             } finally {
-                generateImg2ImgButton.disabled = false;
-                generateImg2ImgButton.textContent = 'Generate Image-to-Image';
+                setLoadingState(false);
+                if(generateImg2ImgButton) generateImg2ImgButton.textContent = 'Generate Image-to-Image';
             }
         });
     }
@@ -894,12 +918,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 prompt: inpaintPromptInput.value.trim(),
                 model_id: inpaintModelSelection.value,
                 seed: inpaintSeedInput.value.trim() ? parseInt(inpaintSeedInput.value.trim()) : null,
-                // Add other inpainting params if they exist in UI
             };
-            // originalInpaintImageForUpload is already set by its change listener
 
             if (!originalInpaintImageForUpload) {
-                generalStatusArea.textContent = 'Please upload an image for inpainting.';
+                generalStatusArea.textContent = 'Error: Please upload an image for inpainting.';
                 generalStatusArea.style.color = 'red';
                 inpaintImageUpload.focus();
                 return;
@@ -910,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 inpaintPromptInput.focus();
                 return;
             }
-
+            
             const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
             let hasMask = false;
             for (let i = 3; i < maskData.data.length; i += 4) {
@@ -937,15 +959,15 @@ document.addEventListener('DOMContentLoaded', () => {
             generateInpaintButton.disabled = true;
             generateInpaintButton.textContent = 'Generating...';
 
-            const maskImageDataURL = maskCanvas.toDataURL('image/png');
+            const maskImageDataURL = maskCanvas.toDataURL('image/png'); 
 
             const formData = new FormData();
-            formData.append('original_image', originalInpaintImageForUpload);
-            formData.append('mask_image_data_url', maskImageDataURL);
+            formData.append('original_image', originalInpaintImageForUpload); 
+            formData.append('mask_image_data_url', maskImageDataURL); 
             formData.append('prompt', currentGenerationParams.prompt);
             formData.append('model_id', currentGenerationParams.model_id);
             if (currentGenerationParams.seed !== null) formData.append('seed', currentGenerationParams.seed);
-
+            
             try {
                 const response = await fetch('/api/inpaint', { method: 'POST', body: formData });
                 const result = await response.json();
