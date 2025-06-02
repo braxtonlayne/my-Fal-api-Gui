@@ -1,0 +1,444 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+h2 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+h3 {
+    margin-top: 0;
+    color: #444;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+
+div {
+    margin-bottom: 15px;
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* So padding doesn't add to width */
+}
+
+textarea {
+    resize: vertical; /* Allow vertical resize */
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#statusArea {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#imageResultArea {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#generatedImage {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff; /* If image is transparent */
+    padding: 5px; /* Optional padding around image */
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* Loading Overlay Styles */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    z-index: 10000; /* Ensure it's on top of everything */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.2em; /* Slightly smaller default text */
+    text-align: center;
+    flex-direction: column; /* Stack spinner and text vertically */
+}
+
+.spinner {
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px; /* Space between spinner and text */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loadingMessage {
+    color: #fff; /* Ensure text is white */
+    font-weight: bold;
+}
+
+/* New Layout Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #e9ecef; /* Light grey background for whole page */
+    color: #343a40; /* Darker text for better readability */
+    line-height: 1.6;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* Increased gap */
+}
+
+.controls-panel {
+    flex: 1;
+    min-width: 380px; /* Slightly wider */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Gap between cards in this panel */
+}
+
+.results-history-panel {
+    flex: 2;
+    min-width: 420px; /* Slightly wider */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Gap between cards in this panel */
+}
+
+.card {
+    background: #ffffff; /* White background for cards */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.075); /* Softer shadow */
+    margin-bottom: 0; /* Remove default div margin if card is the direct child */
+}
+.card > div:last-child { /* Remove margin from last div inside a card if not needed */
+    margin-bottom: 0;
+}
+
+
+.mode-selector-section label {
+    display: inline-block; /* Radio buttons side-by-side */
+    margin-right: 15px;
+    font-weight: normal; /* Normal weight for radio labels */
+}
+.mode-selector-section input[type="radio"] {
+    margin-right: 5px;
+}
+
+
+/* Control Sections Styling */
+.mode-controls {
+    /* border: 1px solid #dee2e6; */ /* Using card shadow instead of border */
+    /* padding: 20px; */ /* Padding is now on .card */
+    /* margin-top: 0; */ /* Removed as .card has gap */
+    /* border-radius: 8px; */ /* On .card */
+}
+
+.mode-controls h3 { /* Already styled by general h3 */
+    /* margin-top: 0; */
+    /* border-bottom: 1px solid #eee; */
+    /* padding-bottom: 10px; */
+}
+
+label {
+    display: block;
+    margin-top: 12px; /* Consistent top margin */
+    margin-bottom: 6px; /* Consistent bottom margin */
+    font-weight: 600; /* Slightly bolder labels */
+    color: #495057;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%; /* Full width within parent */
+    padding: 12px; /* Increased padding */
+    margin-bottom: 12px; /* Consistent margin */
+    border: 1px solid #ced4da; /* Standard bootstrap-like border color */
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f8f9fa; /* Very light input background */
+    color: #495057;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+button, button[type="button"] { /* Ensure type="button" also gets styles */
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px; /* Adjusted margin */
+    margin-right: 8px; /* Adjusted margin */
+    font-size: 0.95em; /* Slightly smaller button font */
+    transition: background-color 0.15s ease-in-out;
+}
+button:hover, button[type="button"]:hover {
+    background-color: #0056b3;
+}
+button:disabled, button[type="button"]:disabled {
+    background-color: #6c757d; /* Bootstrap secondary/disabled color */
+    cursor: not-allowed;
+}
+#clearHistoryButton {
+    background-color: #dc3545; /* Red for clear/delete actions */
+    margin-bottom: 10px; /* Space below clear button */
+}
+#clearHistoryButton:hover {
+    background-color: #c82333;
+}
+
+
+/* Result Item Styling */
+#imageResultArea {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 0; /* Handled by card padding */
+    text-align: left; /* Align text to left within result items */
+}
+.result-item {
+    border: 1px solid #e9ecef; /* Lighter border for result item */
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f8f9fa; /* Light background for each item */
+    width: fit-content; 
+    max-width: 512px; /* Max width of image itself */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 0; /* Gap handles spacing */
+}
+.result-item img.result-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    border: 1px solid #dee2e6;
+}
+.result-params p {
+    margin: 6px 0;
+    font-size: 0.85em; /* Smaller font for params */
+    word-break: break-all; /* Prevent long prompts from breaking layout */
+}
+.result-params p strong {
+    color: #343a40;
+}
+.result-actions {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+    gap: 8px;
+}
+.result-actions button {
+    background-color: #28a745; /* Green for actions */
+    font-size: 0.85em;
+    padding: 8px 12px;
+}
+.result-actions button:hover {
+    background-color: #1e7e34;
+}
+
+
+/* History Gallery Styling */
+#historyGallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* max-height: 400px; */ /* Defined in HTML, can be adjusted */
+    /* overflow-y: auto; */ /* Defined in HTML */
+    /* border: 1px solid #ccc; */ /* Handled by card */
+    /* padding: 10px; */ /* Handled by card */
+    /* background: #f9f9f9; */ /* Handled by card */
+    /* border-radius: 5px; */ /* Handled by card */
+    align-content: flex-start; /* Align items to the start of container */
+}
+.history-item {
+    border: 1px solid #dee2e6;
+    padding: 8px; /* Slightly reduced padding */
+    margin: 0; /* Gap handles spacing */
+    background: white;
+    border-radius: 4px;
+    width: 110px; /* Slightly smaller thumbnails */
+    text-align: center;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.history-item img {
+    width: 100px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-bottom: 5px; /* Space between image and buttons */
+}
+.history-item .history-item-actions { /* Container for buttons */
+    display: flex;
+    justify-content: space-around; /* Distribute buttons */
+    align-items: center;
+}
+.history-item .delete-history-item-btn,
+.history-item .reload-history-params-btn {
+    font-size: 0.75em; /* Smaller font for tiny buttons */
+    padding: 4px 6px; /* Smaller padding */
+    margin-top: 0; /* Remove top margin from individual buttons */
+}
+.history-item .delete-history-item-btn {
+    background-color: #ef476f; /* More vibrant red */
+}
+.history-item .delete-history-item-btn:hover {
+    background-color: #d63384; /* Darker vibrant red */
+}
+.history-item .reload-history-params-btn {
+    background-color: #ffc107; /* Amber/Yellow for reload */
+    color: #212529; /* Dark text for yellow button */
+}
+.history-item .reload-history-params-btn:hover {
+    background-color: #e0a800;
+}
+
+
+/* Canvas Styling */
+#canvasContainer {
+    border: 1px solid #adb5bd; /* Clearer border */
+    background-color: #f8f9fa; /* Light background for canvas area */
+    width: 512px; /* Fixed as per HTML */
+    height: 512px; /* Fixed as per HTML */
+}
+#maskCanvas {
+    opacity: 0.55; /* Default opacity from HTML, can be adjusted */
+    cursor: crosshair;
+}
+#brushSize {
+    vertical-align: middle;
+    margin-left: 5px;
+    max-width: 150px; /* Constrain width of range slider */
+}
+#brushSizeValue {
+    display: inline-block;
+    min-width: 30px; /* Ensure space for "XXpx" */
+    margin-left: 5px;
+}
+
+
+/* Status Area */
+#statusArea {
+    padding: 12px; /* More padding */
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500; /* Normal bold */
+    margin-top: 0; /* Now inside card */
+    border: none; /* Remove dashed border, card provides outline */
+    background-color: transparent; /* Transparent as it's inside a card */
+}
+
+
+/* Media Queries */
+@media (max-width: 992px) { /* Adjust breakpoint for panel stacking if needed */
+    .controls-panel {
+        min-width: calc(100% - 40px); /* Full width minus padding */
+    }
+    .results-history-panel {
+        min-width: calc(100% - 40px); /* Full width minus padding */
+    }
+}
+
+@media (max-width: 768px) {
+    body { padding: 15px; }
+    .container { gap: 15px; }
+    .controls-panel, .results-history-panel {
+        min-width: 100%; /* Stack them */
+    }
+    h1 { font-size: 1.8em; }
+    /* Further fine-tuning for smaller screens can be added */
+}
+
+/* Ensure API Key section buttons are on the same line if space allows */
+.api-key-section div { /* Assuming buttons are in a div or directly after input */
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping if not enough space */
+    align-items: center; /* Align items vertically */
+    gap: 8px; /* Space between input and buttons */
+}
+.api-key-section input[type="text"] {
+    flex-grow: 1; /* Allow input to take available space */
+    margin-bottom: 0; /* Remove bottom margin if buttons are on same line */
+}
+.api-key-section button {
+    margin-top: 0; /* Remove top margin if buttons are on same line */
+}
+
+/* Styling for the mode selector radio buttons */
+.mode-selector-section #modeSelector label {
+    margin-bottom: 5px; /* Add some bottom margin for wrapped items */
+}
