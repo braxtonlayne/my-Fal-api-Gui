@@ -194,11 +194,96 @@ document.addEventListener('DOMContentLoaded', () => {
     if (clearMaskButton) clearMaskButton.addEventListener('click', clearMask);
 
     // --- API Key Management ---
-    const updateApiKeyUI = (isSet, message = '') => { /* ... (implementation as before) ... */ };
-    const checkApiKeyStatus = async () => { /* ... (implementation as before) ... */ };
-    if (saveApiKeyButton) saveApiKeyButton.addEventListener('click', async () => { /* ... */ });
-    if (clearApiKeyButton) clearApiKeyButton.addEventListener('click', async () => { /* ... */ });
-    localStorage.removeItem('falApiKey'); // Clear old key storage
+    const updateApiKeyUI = (isSet, message = '') => {
+        if (isSet) {
+            apiKeyInput.value = '********'; // Mask the key
+            apiKeyInput.disabled = true;
+            saveApiKeyButton.disabled = true;
+            apiKeyStatusArea.textContent = message || 'API Key is set on the server.';
+            apiKeyStatusArea.style.color = 'green';
+        } else {
+            apiKeyInput.value = '';
+            apiKeyInput.placeholder = 'Enter your FAL API Key';
+            apiKeyInput.disabled = false;
+            saveApiKeyButton.disabled = false;
+            apiKeyStatusArea.textContent = message || 'API Key is not set. Please save your key.';
+            apiKeyStatusArea.style.color = 'orange';
+        }
+    };
+
+    const checkApiKeyStatus = async () => {
+        try {
+            const response = await fetch('/api/get_api_key_status');
+            const data = await response.json();
+            updateApiKeyUI(data.is_set);
+            if (data.is_set) {
+                 generalStatusArea.textContent = 'Ready to generate.'; // Simplified message
+                 generalStatusArea.style.color = 'blue';
+            } else {
+                generalStatusArea.textContent = 'Please set your API Key before generating.'; // Simplified message
+                generalStatusArea.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Error checking API key status:', error);
+            apiKeyStatusArea.textContent = 'Could not verify API Key status.';
+            apiKeyStatusArea.style.color = 'red';
+            generalStatusArea.textContent = 'Error checking API key status. Backend might be down.';
+            generalStatusArea.style.color = 'red';
+        }
+    };
+
+    if (saveApiKeyButton) {
+        saveApiKeyButton.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey || apiKey === '********') { // Prevent saving placeholder
+                apiKeyStatusArea.textContent = 'Please enter a valid API Key to save.';
+                apiKeyStatusArea.style.color = 'red';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/save_api_key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey }),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    updateApiKeyUI(true, result.message);
+                    generalStatusArea.textContent = 'API Key saved. Ready to generate.'; // Simplified message
+                    generalStatusArea.style.color = 'green';
+                } else {
+                    updateApiKeyUI(false, `Error: ${result.error || 'Could not save API Key'}`);
+                }
+            } catch (error) {
+                console.error('Error saving API key:', error);
+                updateApiKeyUI(false, `Network error: ${error.message}`);
+            }
+        });
+    }
+
+    if (clearApiKeyButton) {
+        clearApiKeyButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/clear_api_key', { method: 'POST' });
+                const result = await response.json();
+                if (response.ok) {
+                    updateApiKeyUI(false, result.message);
+                     generalStatusArea.textContent = 'API Key cleared. Please set your API Key to generate.'; // Simplified message
+                     generalStatusArea.style.color = 'orange';
+                } else {
+                    apiKeyStatusArea.textContent = `Error: ${result.error || 'Could not clear API Key'}`;
+                    apiKeyStatusArea.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Error clearing API key:', error);
+                apiKeyStatusArea.textContent = `Network error: ${error.message}`;
+                apiKeyStatusArea.style.color = 'red';
+            }
+        });
+    }
+
+    localStorage.removeItem('falApiKey'); // Clear old key storage (Confirming it's present)
 
     // --- Dynamic Control Rendering & Population ---
     // Populates model selection dropdowns based on MODEL_SCHEMAS.
@@ -317,7 +402,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function getDynamicControlsContainer(mode) { return dynamicContainers[mode] || null; }
 
     // --- Global Loading State & Result Display ---
-    function setLoadingState(isLoading, message = 'Loading...') { /* ... (implementation as before, ensure generateVideoButton is included) ... */ }
+    function setLoadingState(isLoading, message = 'Loading...') {
+        if (!loadingOverlay || !loadingMessage) return;
+
+        const allGenerateButtons = [
+            generateButton, generateImg2ImgButton, generateInpaintButton,
+            generateUpscaleButton, generateBgRemoveButton, generateVideoButton // Added generateVideoButton
+        ];
+
+        if (isLoading) {
+            loadingMessage.textContent = message;
+            loadingOverlay.style.display = 'flex';
+            allGenerateButtons.forEach(btn => { if(btn) btn.disabled = true; });
+            if(generalStatusArea) generalStatusArea.textContent = message; // Also update status area
+            if(generalStatusArea) generalStatusArea.style.color = 'blue';
+        } else {
+            loadingOverlay.style.display = 'none';
+            allGenerateButtons.forEach(btn => { if(btn) btn.disabled = false; });
+            // Don't clear generalStatusArea here if it might contain a success/error message
+            // If generalStatusArea was purely for loading, you could clear it:
+            // if(generalStatusArea && generalStatusArea.textContent === message) generalStatusArea.textContent = '';
+        }
+    }
     // Updated to handle video_url and contentType
     function displayResultItem(resultData, params, mode, isFromHistory = false) { // resultData is {image_url} or {video_url}
         if (!imageResultArea) return;
@@ -348,13 +454,114 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionsDiv = document.createElement('div'); actionsDiv.className = 'result-actions';
         Object.assign(actionsDiv.style, { display: 'flex', gap: '10px' });
         const downloadBtn = document.createElement('button'); downloadBtn.className = 'download-btn'; downloadBtn.textContent = 'Download';
-        downloadBtn.onclick = () => { /* ... (implementation as before, using contentUrl and contentType) ... */ };
+        downloadBtn.onclick = () => {
+            const a = document.createElement('a');
+            a.href = contentUrl;
+            let filename = "generated_content";
+            if (params.prompt) {
+                filename = `${params.prompt.substring(0,30).replace(/\s+/g, '_')}_${params.seed || 'random'}`;
+            } else if (params.model_id) {
+                filename = `${mode}_${params.model_id.replace(/[\/\s]/g, '_')}`;
+            }
+            filename += (contentType === 'video' ? '.mp4' : '.png');
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
         actionsDiv.appendChild(downloadBtn);
+
         if (contentType === 'image') { // Only add image-specific actions for images
             ['Use for Img2Img', 'Send to Inpaint', 'Send to Upscale'].forEach(actionText => {
-                if ((actionText === 'Use for Img2Img' && mode === 'img2img') || (actionText === 'Send to Inpaint' && mode === 'inpaint') || (actionText === 'Send to Upscale' && mode === 'upscale')) return;
+                let targetMode = '';
+                if (actionText === 'Use for Img2Img') targetMode = 'img2img';
+                else if (actionText === 'Send to Inpaint') targetMode = 'inpaint';
+                else if (actionText === 'Send to Upscale') targetMode = 'upscale';
+
+                if (mode === targetMode) return; // Don't show button if already in target mode
+
                 const btn = document.createElement('button'); btn.textContent = actionText;
-                btn.onclick = async () => { /* ... (logic to fetch blob, switch mode, populate input - needs careful review for dynamic inputs) ... */ };
+                btn.onclick = async () => {
+                    try {
+                        const response = await fetch(contentUrl);
+                        const blob = await response.blob();
+                        const fileName = `loaded_from_result.${blob.type.split('/')[1] || 'png'}`;
+                        const file = new File([blob], fileName, { type: blob.type });
+
+                        displayControlsForMode(targetMode); // Switch mode and render controls
+
+                        // Wait a brief moment for DOM updates after displayControlsForMode
+                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                        // If targetMode is 'inpaint', special handling for static canvas
+                        if (targetMode === 'inpaint' && inpaintImageUpload) {
+                             originalInpaintImageForUpload = file; // Store for direct use by inpaint logic
+                             const dataTransfer = new DataTransfer();
+                             dataTransfer.items.add(file);
+                             inpaintImageUpload.files = dataTransfer.files;
+                             const changeEvent = new Event('change', { bubbles: true });
+                             inpaintImageUpload.dispatchEvent(changeEvent); // Triggers canvas update
+                             if (params.prompt) {
+                                const inpaintPromptEl = document.getElementById(`param-inpaint-prompt`);
+                                if (inpaintPromptEl) inpaintPromptEl.value = params.prompt;
+                             }
+                        } else {
+                            // Generic dynamic input population for other modes (img2img, upscale)
+                            const currentModelSelect = modelSelectElements[targetMode];
+                            if (!currentModelSelect || !currentModelSelect.value) {
+                                console.error(`Model select for ${targetMode} not found or no model selected.`);
+                                generalStatusArea.textContent = `Could not set image for ${targetMode}: model not selected.`;
+                                generalStatusArea.style.color = 'red';
+                                return;
+                            }
+                            const selectedModelId = currentModelSelect.value;
+                            const modelSchema = MODEL_SCHEMAS[selectedModelId];
+
+                            if (!modelSchema || !modelSchema.parameters) {
+                                console.error(`Schema not found for model ${selectedModelId}`);
+                                generalStatusArea.textContent = `Could not set image: schema missing for ${selectedModelId}.`;
+                                generalStatusArea.style.color = 'red';
+                                return;
+                            }
+
+                            // Find the primary file input parameter (heuristic)
+                            const fileParamInfo = modelSchema.parameters.find(p => p.type === 'file' && (p.name.includes('image') || p.name.includes('init_image') || p.name.includes('file') || p.name.includes('url'))) || modelSchema.parameters.find(p => p.type === 'file');
+
+                            if (fileParamInfo) {
+                                const fileInputId = `param-${targetMode}-${fileParamInfo.name}`;
+                                const fileInputElement = document.getElementById(fileInputId);
+                                if (fileInputElement) {
+                                    const dataTransfer = new DataTransfer();
+                                    dataTransfer.items.add(file);
+                                    fileInputElement.files = dataTransfer.files;
+                                    const changeEvent = new Event('change', { bubbles: true });
+                                    fileInputElement.dispatchEvent(changeEvent); // Trigger preview
+                                } else {
+                                    console.error(`File input ${fileInputId} not found for ${targetMode}.`);
+                                    generalStatusArea.textContent = `File input not found for ${targetMode}.`;
+                                    generalStatusArea.style.color = 'red';
+                                }
+                                // Carry over prompt if target mode has a prompt input
+                                const promptParamInfo = modelSchema.parameters.find(p => p.name === 'prompt');
+                                if (params.prompt && promptParamInfo) {
+                                    const promptElement = document.getElementById(`param-${targetMode}-prompt`);
+                                    if (promptElement) promptElement.value = params.prompt;
+                                }
+                            } else {
+                                console.warn(`No suitable file parameter found for model ${selectedModelId} in ${targetMode} mode.`);
+                                generalStatusArea.textContent = `Could not find a file input for ${targetMode} with model ${selectedModelId}.`;
+                                generalStatusArea.style.color = 'orange';
+                            }
+                        }
+                        generalStatusArea.textContent = `${actionText.replace("Use for", "Sent to")} mode. Image loaded.`;
+                        generalStatusArea.style.color = 'green';
+
+                    } catch (err) {
+                        console.error(`Error during "${actionText}":`, err);
+                        generalStatusArea.textContent = `Error setting image for ${targetMode}: ${err.message}`;
+                        generalStatusArea.style.color = 'red';
+                    }
+                };
                 actionsDiv.appendChild(btn);
             });
         }
@@ -387,14 +594,92 @@ document.addEventListener('DOMContentLoaded', () => {
             media.alt = `History: ${entry.params.prompt || entry.mode}`; media.style.display = 'block';
             item.appendChild(media);
             item.onclick = () => displayResultItem({ [entry.contentType === 'video' ? 'video_url' : 'image_url']: entry.itemUrl }, entry.params, entry.mode, true);
-            // Add delete/reload buttons to item... (omitted for brevity, assume similar to previous)
+
+            const actionsContainer = document.createElement('div');
+            Object.assign(actionsContainer.style, { position: 'absolute', top: '2px', right: '2px', display: 'flex', flexDirection: 'column', gap: '2px' });
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = 'X'; deleteBtn.title = "Delete from history";
+            Object.assign(deleteBtn.style, { padding: '2px 4px', fontSize: '0.7em' });
+            deleteBtn.onclick = (e) => { e.stopPropagation(); deleteHistoryItem(entry.id); };
+            actionsContainer.appendChild(deleteBtn);
+
+            const reloadBtn = document.createElement('button');
+            reloadBtn.innerHTML = '&#x21BB;'; reloadBtn.title = "Reload parameters";
+            Object.assign(reloadBtn.style, { padding: '2px 4px', fontSize: '0.7em' });
+            reloadBtn.onclick = (e) => { e.stopPropagation(); reloadParamsFromHistory(entry);};
+            actionsContainer.appendChild(reloadBtn);
+
+            item.appendChild(actionsContainer);
             historyGallery.appendChild(item);
         });
     }
+
+    function deleteHistoryItem(historyId) {
+        generationHistory = generationHistory.filter(entry => entry.id !== historyId);
+        saveHistory();
+        renderHistoryGallery();
+    }
+
     function loadHistory() { const s = localStorage.getItem(HISTORY_STORAGE_KEY); if(s) generationHistory = JSON.parse(s); renderHistoryGallery(); }
     function saveHistory() { localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(generationHistory)); }
-    if(clearHistoryButton) clearHistoryButton.addEventListener('click', () => { if(confirm("Clear history?")){ generationHistory=[]; saveHistory(); renderHistoryGallery();}});
-    function reloadParamsFromHistory(historyEntry) { /* ... (implementation as before, ensure renderModelControls is called after model is set) ... */ }
+    if(clearHistoryButton) clearHistoryButton.addEventListener('click', () => { if(confirm("Clear history?")){ generationHistory=[]; saveHistory(); renderHistoryGallery(); generalStatusArea.textContent = "History cleared."; generalStatusArea.style.color="orange";}});
+
+    async function reloadParamsFromHistory(historyEntry) {
+        currentMode = historyEntry.mode;
+        // Activate the correct radio button for the mode
+        const modeRadio = document.querySelector(`input[name="mode"][value="${currentMode}"]`);
+        if (modeRadio) {
+            modeRadio.checked = true;
+        }
+        // This will also call renderModelControls for the currently selected model in that mode.
+        displayControlsForMode(currentMode);
+
+        // Wait for displayControlsForMode and its renderModelControls to complete
+        await new Promise(resolve => setTimeout(resolve, 150));
+
+
+        const params = historyEntry.params;
+        if (params.model_id) {
+            const modelSelect = modelSelectElements[currentMode];
+            if (modelSelect) {
+                modelSelect.value = params.model_id;
+                // Explicitly re-render controls for the specific model_id from history,
+                // as displayControlsForMode might pick the first model by default.
+                renderModelControls(params.model_id, currentMode);
+                // Wait again for these specific controls to render
+                await new Promise(resolve => setTimeout(resolve, 150));
+            }
+        }
+
+        // Populate dynamic form inputs
+        const container = getDynamicControlsContainer(currentMode);
+        if (container && MODEL_SCHEMAS && params.model_id && MODEL_SCHEMAS[params.model_id]) {
+            MODEL_SCHEMAS[params.model_id].parameters.forEach(paramInfo => {
+                const inputElement = container.querySelector(`[name="${paramInfo.name}"]`);
+                if (inputElement && params[paramInfo.name] !== undefined) {
+                    if (paramInfo.type === 'boolean') {
+                        inputElement.checked = Boolean(params[paramInfo.name]);
+                    } else if (inputElement.type === 'file') {
+                        // Cannot set file input values directly for security reasons.
+                        // User must re-select if a file was part of params.
+                        // However, if the history item's image is to be used,
+                        // the 'Send to X' buttons handle that.
+                        console.warn(`Cannot automatically reload file parameter "${paramInfo.name}" from history.`);
+                    } else {
+                        inputElement.value = params[paramInfo.name];
+                    }
+                }
+            });
+        }
+
+        // Display the image/video from history in the result area
+        // This also allows using "Send to X" buttons from the reloaded history item
+        displayResultItem({ [historyEntry.contentType === 'video' ? 'video_url' : 'image_url']: historyEntry.itemUrl }, historyEntry.params, historyEntry.mode, true);
+
+        generalStatusArea.textContent = `Parameters reloaded from history for ${currentMode} mode. Original content displayed.`;
+        generalStatusArea.style.color = 'blue';
+    }
 
 
     // --- API Call Logic ---
@@ -497,6 +782,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Assigning Event Listeners to Generate Buttons ---
+    // Initial check
+    checkApiKeyStatus();
+    // Load history on page startup
+    loadHistory();
+
+
     if (generateButton) { // Text-to-Image
         generateButton.addEventListener('click', () => {
             const selectedModelId = modelSelectElements.txt2img.value;
