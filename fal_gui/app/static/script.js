@@ -782,10 +782,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Assigning Event Listeners to Generate Buttons ---
-    // Initial check
-    checkApiKeyStatus();
-    // Load history on page startup
-    loadHistory();
+    // Initial setup sequence:
+    populateModelSelectors();       // 1. Populate all model dropdowns
+    displayControlsForMode(currentMode); // 2. Display controls for the initial mode (e.g., 'txt2img') and render its model's form.
+    checkApiKeyStatus();            // 3. Check API key status (updates UI accordingly)
+    loadHistory();                  // 4. Load and render generation history
 
 
     if (generateButton) { // Text-to-Image
