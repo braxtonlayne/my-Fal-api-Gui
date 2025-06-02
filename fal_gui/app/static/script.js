@@ -708,8 +708,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        const safetyLevelSetting = document.getElementById('safetyLevelSetting');
-        if (safetyLevelSetting) params.safety_level = safetyLevelSetting.value;
+        // const safetyLevelSetting = document.getElementById('safetyLevelSetting');
+        // if (safetyLevelSetting) params.safety_level = safetyLevelSetting.value;
         return params;
     }
 

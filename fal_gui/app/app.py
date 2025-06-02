@@ -234,6 +234,8 @@ def api_generate():
         return jsonify({"error": "Polling timed out waiting for FAL response"}), 500
 
     except requests.exceptions.HTTPError as e:
+        app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
+        app.logger.error(f"HTTPError Response Text: {e.response.text}")
         error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
         return jsonify({"error": f"FAL API Error: {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
@@ -504,6 +506,8 @@ def api_image_to_image():
         relevant_dicts = [IMG_EDIT_MODEL_URLS, VIDEO_MODEL_URLS]
         return process_common_image_request("image_to_image", relevant_dicts)
     except requests.exceptions.HTTPError as e:
+        app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
+        app.logger.error(f"HTTPError Response Text: {e.response.text}")
         error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
         return jsonify({"error": f"FAL API Error (Img2Img): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
@@ -518,6 +522,8 @@ def api_inpaint():
         # Inpaint models are within IMG_EDIT_MODEL_URLS
         return process_common_image_request("inpaint", [IMG_EDIT_MODEL_URLS])
     except requests.exceptions.HTTPError as e:
+        app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
+        app.logger.error(f"HTTPError Response Text: {e.response.text}")
         error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
         return jsonify({"error": f"FAL API Error (Inpaint): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
@@ -532,6 +538,8 @@ def api_upscale():
         # Upscale models are within IMG_EDIT_MODEL_URLS
         return process_common_image_request("upscale", [IMG_EDIT_MODEL_URLS])
     except requests.exceptions.HTTPError as e:
+        app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
+        app.logger.error(f"HTTPError Response Text: {e.response.text}")
         error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
         return jsonify({"error": f"FAL API Error (Upscale): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:
@@ -546,6 +554,8 @@ def api_remove_background():
         # Background removal models are within IMG_EDIT_MODEL_URLS
         return process_common_image_request("remove_background", [IMG_EDIT_MODEL_URLS])
     except requests.exceptions.HTTPError as e:
+        app.logger.error(f"HTTPError Status Code: {e.response.status_code}")
+        app.logger.error(f"HTTPError Response Text: {e.response.text}")
         error_details = e.response.json() if hasattr(e.response, 'json') and callable(e.response.json) else e.response.text
         return jsonify({"error": f"FAL API Error (BG Remove): {e.response.status_code}", "details": error_details}), e.response.status_code
     except requests.exceptions.RequestException as e:

@@ -72,12 +72,28 @@ const MODEL_SCHEMAS = {
                     {"value": "9:16", "label": "9:16"},
                     {"value": "9:21", "label": "9:21"}
                 ]
+            },
+            {
+                "name": "safety_tolerance",
+                "type": "enum",
+                "label": "Safety Tolerance",
+                "defaultValue": "2",
+                "options": [
+                    {"value": "1", "label": "Level 1 (Strictest)"},
+                    {"value": "2", "label": "Level 2 (Default)"},
+                    {"value": "3", "label": "Level 3"},
+                    {"value": "4", "label": "Level 4"},
+                    {"value": "5", "label": "Level 5"},
+                    {"value": "6", "label": "Level 6 (Most Permissive)"}
+                ],
+                "description": "Adjusts the safety filtering level. Higher values are more permissive. Default: 2.",
+                "required": false
             }
         ]
     },
     "fal-ai/flux-pro/kontext/max": {
         "description": "FLUX.1 Kontext [Max] is a more powerful version of Kontext for complex image editing.",
-        "parameters": [ // Identical to flux-pro/kontext
+        "parameters": [
             {
                 "name": "prompt",
                 "type": "string",
@@ -145,6 +161,22 @@ const MODEL_SCHEMAS = {
                     {"value": "9:21", "label": "9:21"}
                 ],
                 "description": "Aspect ratio of the output image."
+            },
+            {
+                "name": "safety_tolerance",
+                "type": "enum",
+                "label": "Safety Tolerance",
+                "defaultValue": "2",
+                "options": [
+                    {"value": "1", "label": "Level 1 (Strictest)"},
+                    {"value": "2", "label": "Level 2 (Default)"},
+                    {"value": "3", "label": "Level 3"},
+                    {"value": "4", "label": "Level 4"},
+                    {"value": "5", "label": "Level 5"},
+                    {"value": "6", "label": "Level 6 (Most Permissive)"}
+                ],
+                "description": "Adjusts the safety filtering level. Higher values are more permissive. Default: 2.",
+                "required": false
             }
         ]
     },
@@ -284,12 +316,28 @@ const MODEL_SCHEMAS = {
                     {"value": "9:21", "label": "9:21"}
                 ],
                 "description": "Aspect ratio of the output image."
+            },
+            {
+                "name": "safety_tolerance",
+                "type": "enum",
+                "label": "Safety Tolerance",
+                "defaultValue": "2",
+                "options": [
+                    {"value": "1", "label": "Level 1 (Strictest)"},
+                    {"value": "2", "label": "Level 2 (Default)"},
+                    {"value": "3", "label": "Level 3"},
+                    {"value": "4", "label": "Level 4"},
+                    {"value": "5", "label": "Level 5"},
+                    {"value": "6", "label": "Level 6 (Most Permissive)"}
+                ],
+                "description": "Adjusts the safety filtering level. Higher values are more permissive. Default: 2.",
+                "required": false
             }
         ]
     },
     "fal-ai/flux-pro/kontext/text-to-image": {
         "description": "FLUX.1 Kontext [pro] -- Frontier image generation model.",
-        "parameters": [ // Identical to flux-pro/kontext/max/text-to-image
+        "parameters": [
             {
                 "name": "prompt",
                 "type": "string",
@@ -350,6 +398,22 @@ const MODEL_SCHEMAS = {
                     {"value": "9:21", "label": "9:21"}
                 ],
                 "description": "Aspect ratio of the output image."
+            },
+            {
+                "name": "safety_tolerance",
+                "type": "enum",
+                "label": "Safety Tolerance",
+                "defaultValue": "2",
+                "options": [
+                    {"value": "1", "label": "Level 1 (Strictest)"},
+                    {"value": "2", "label": "Level 2 (Default)"},
+                    {"value": "3", "label": "Level 3"},
+                    {"value": "4", "label": "Level 4"},
+                    {"value": "5", "label": "Level 5"},
+                    {"value": "6", "label": "Level 6 (Most Permissive)"}
+                ],
+                "description": "Adjusts the safety filtering level. Higher values are more permissive. Default: 2.",
+                "required": false
             }
         ]
     },
