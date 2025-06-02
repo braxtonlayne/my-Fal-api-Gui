@@ -14,36 +14,36 @@ TXT2IMG_MODEL_URLS = {
     "fal-ai/sdxl": "https://fal.ai/api/sdxl/run",
     "fal-ai/fast-turbo-diffusion": "https://fal.ai/api/fast-turbo-diffusion/run",
     "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run", # Also in IMG_EDIT
-    "fal-ai/flux-pro/kontext/max/text-to-image": "https://fal.ai/api/fal-ai/flux-pro/kontext/max/text-to-image/run",
-    "fal-ai/flux-pro/kontext/text-to-image": "https://fal.ai/api/fal-ai/flux-pro/kontext/text-to-image/run",
-    "fal-ai/imagen4/preview": "https://fal.ai/api/fal-ai/imagen4/preview/run",
-    "fal-ai/bagel": "https://fal.ai/api/fal-ai/bagel/run",
-    "fal-ai/dreamo": "https://fal.ai/api/fal-ai/dreamo/run",
-    "fal-ai/ideogram/v3": "https://fal.ai/api/fal-ai/ideogram/v3/run",
+    "fal-ai/flux-pro/kontext/max/text-to-image": "https://fal.ai/api/flux-pro/kontext/max/text-to-image/run",
+    "fal-ai/flux-pro/kontext/text-to-image": "https://fal.ai/api/flux-pro/kontext/text-to-image/run",
+    "fal-ai/imagen4/preview": "https://fal.ai/api/imagen4/preview/run",
+    "fal-ai/bagel": "https://fal.ai/api/bagel/run",
+    "fal-ai/dreamo": "https://fal.ai/api/dreamo/run",
+    "fal-ai/ideogram/v3": "https://fal.ai/api/ideogram/v3/run",
 }
 
 IMG_EDIT_MODEL_URLS = {
     # Image Editing / Image-to-Image
     "fal-ai/sdxl-i2i-placeholder": "https://fal.ai/api/sdxl-img2img-placeholder/run", # Placeholder
     "fal-ai/ip-adapter-faceid-plus-lora": "https://fal.ai/api/ip-adapter-faceid-plus-lora/run", # Versatile
-    "fal-ai/flux-pro/kontext": "https://fal.ai/api/fal-ai/flux-pro/kontext/run",
-    "fal-ai/flux-pro/kontext/max": "https://fal.ai/api/fal-ai/flux-pro/kontext/max/run",
-    "fal-ai/flux-pro/kontext/max/multi": "https://fal.ai/api/fal-ai/flux-pro/kontext/max/multi/run",
-    "fal-ai/bagel/edit": "https://fal.ai/api/fal-ai/bagel/edit/run",
-    "fal-ai/ideogram/v3/remix": "https://fal.ai/api/fal-ai/ideogram/v3/remix/run", # Image-to-Image
+    "fal-ai/flux-pro/kontext": "https://fal.ai/api/flux-pro/kontext/run",
+    "fal-ai/flux-pro/kontext/max": "https://fal.ai/api/flux-pro/kontext/max/run",
+    "fal-ai/flux-pro/kontext/max/multi": "https://fal.ai/api/flux-pro/kontext/max/multi/run",
+    "fal-ai/bagel/edit": "https://fal.ai/api/bagel/edit/run",
+    "fal-ai/ideogram/v3/remix": "https://fal.ai/api/ideogram/v3/remix/run", # Image-to-Image
 
     # Inpainting
     "fal-ai/sdxl-inpainting-placeholder": "https://fal.ai/api/sdxl-inpainting-placeholder/run", # Placeholder
     "fal-ai/stable-diffusion-v1-5-inpainting": "https://fal.ai/api/stable-diffusion-v1-5-inpainting/run",
-    "fal-ai/ideogram/v3/edit": "https://fal.ai/api/fal-ai/ideogram/v3/edit/run", # Inpainting
+    "fal-ai/ideogram/v3/edit": "https://fal.ai/api/ideogram/v3/edit/run", # Inpainting
 
     # Outpainting / Expanding
-    "fal-ai/ideogram/v3/reframe": "https://fal.ai/api/fal-ai/ideogram/v3/reframe/run",
+    "fal-ai/ideogram/v3/reframe": "https://fal.ai/api/ideogram/v3/reframe/run",
 
     # Background Replacement / Removal
     "fal-ai/transparent-background-placeholder": "https://fal.ai/api/transparent-background/run", # Placeholder
     "fal-ai/remove-background": "https://fal.ai/api/remove-background/run",
-    "fal-ai/ideogram/v3/replace-background": "https://fal.ai/api/fal-ai/ideogram/v3/replace-background/run",
+    "fal-ai/ideogram/v3/replace-background": "https://fal.ai/api/ideogram/v3/replace-background/run",
 
     # Upscaling
     "fal-ai/esrgan-placeholder": "https://fal.ai/api/esrgan/run", # Placeholder
@@ -52,15 +52,15 @@ IMG_EDIT_MODEL_URLS = {
 }
 
 VIDEO_MODEL_URLS = {
-    "fal-ai/kling-video/v1.6/pro/elements": "https://fal.ai/api/fal-ai/kling-video/v1.6/pro/elements/run",
-    "fal-ai/kling-video/v1.6/pro/image-to-video": "https://fal.ai/api/fal-ai/kling-video/v1.6/pro/image-to-video/run",
-    "fal-ai/kling-video/v1.6/pro/text-to-video": "https://fal.ai/api/fal-ai/kling-video/v1.6/pro/text-to-video/run",
-    "fal-ai/kling-video/v1.6/standard/elements": "https://fal.ai/api/fal-ai/kling-video/v1.6/standard/elements/run",
-    "fal-ai/kling-video/v1.6/standard/image-to-video": "https://fal.ai/api/fal-ai/kling-video/v1.6/standard/image-to-video/run",
-    "fal-ai/kling-video/v1.6/standard/text-to-video": "https://fal.ai/api/fal-ai/kling-video/v1.6/standard/text-to-video/run",
-    "fal-ai/framepack/f1": "https://fal.ai/api/fal-ai/framepack/f1/run",
-    "fal-ai/framepack": "https://fal.ai/api/fal-ai/framepack/run",
-    "fal-ai/framepack/flf2v": "https://fal.ai/api/fal-ai/framepack/flf2v/run",
+    "fal-ai/kling-video/v1.6/pro/elements": "https://fal.ai/api/kling-video/v1.6/pro/elements/run",
+    "fal-ai/kling-video/v1.6/pro/image-to-video": "https://fal.ai/api/kling-video/v1.6/pro/image-to-video/run",
+    "fal-ai/kling-video/v1.6/pro/text-to-video": "https://fal.ai/api/kling-video/v1.6/pro/text-to-video/run",
+    "fal-ai/kling-video/v1.6/standard/elements": "https://fal.ai/api/kling-video/v1.6/standard/elements/run",
+    "fal-ai/kling-video/v1.6/standard/image-to-video": "https://fal.ai/api/kling-video/v1.6/standard/image-to-video/run",
+    "fal-ai/kling-video/v1.6/standard/text-to-video": "https://fal.ai/api/kling-video/v1.6/standard/text-to-video/run",
+    "fal-ai/framepack/f1": "https://fal.ai/api/framepack/f1/run",
+    "fal-ai/framepack": "https://fal.ai/api/framepack/run",
+    "fal-ai/framepack/flf2v": "https://fal.ai/api/framepack/flf2v/run",
 }
 
 # For simplicity, consolidating older specific category dicts into IMG_EDIT_MODEL_URLS
